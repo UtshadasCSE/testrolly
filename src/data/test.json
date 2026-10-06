@@ -1,0 +1,90 @@
+{
+  "title": "Bangor CAS Interview",
+  "description": "Practice your interview step by step and receive AI-powered feedback.",
+  "questions": [
+    {
+      "id": 1,
+      "difficulty": "Beginner",
+      "question": "Could you please tell me your name and date of birth?",
+      "expectedAnswer": "My name is Utsha Chandra Das, and my date of birth is 25 November 2000.",
+      "preparationTime": 10
+    },
+    {
+      "id": 2,
+      "difficulty": "Beginner",
+      "question": "What is your passport number and your student ID number?",
+      "expectedAnswer": "My passport number is A18614754, and my student ID number is 500805024.",
+      "preparationTime": 10
+    },
+    {
+      "id": 3,
+      "difficulty": "Beginner",
+      "question": "Where will you be studying?",
+      "expectedAnswer": "I’ll be studying at Bangor University in Bangor, North Wales, UK.",
+      "preparationTime": 10
+    },
+    {
+      "id": 4,
+      "difficulty": "Beginner",
+      "question": "What is the name of your course?",
+      "expectedAnswer": "The name of my course is MSc Advanced Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 5,
+      "difficulty": "Beginner",
+      "question": "When does the course start and end?",
+      "expectedAnswer": "According to my offer letter, my course starts on 18 January 2027 and ends on 1 February 2028.",
+      "preparationTime": 10
+    },
+    {
+      "id": 6,
+      "difficulty": "Beginner",
+      "question": "What is the duration of your course?",
+      "expectedAnswer": "It’s a one-year full-time master’s course.",
+      "preparationTime": 10
+    },
+    {
+      "id": 7,
+      "difficulty": "Beginner",
+      "question": "How much is your full tuition fee? Can you give a breakdown of the fees for the full course?",
+      "expectedAnswer": "The full tuition fee for my MSc Advanced Data Science course is £20,500. I have received a £6,000 scholarship, so my remaining tuition fee is £14,500.",
+      "preparationTime": 10
+    },
+    {
+      "id": 8,
+      "difficulty": "Beginner",
+      "question": "Will you attend online classes from your home country if the university requests?",
+      "expectedAnswer": "Yes, definitely. If the university requires me to attend online classes from my home country, I will follow the university’s instructions.",
+      "preparationTime": 10
+    },
+    {
+      "id": 9,
+      "difficulty": "Beginner",
+      "question": "What is the full form of CAS?",
+      "expectedAnswer": "CAS stands for Confirmation of Acceptance for Studies.",
+      "preparationTime": 10
+    },
+    {
+      "id": 10,
+      "difficulty": "Beginner",
+      "question": "How many credits do you need to complete your degree?",
+      "expectedAnswer": "I need to complete 180 credits to obtain my MSc degree.",
+      "preparationTime": 10
+    },
+    {
+      "id": 11,
+      "difficulty": "Beginner",
+      "question": "What qualification will you receive?",
+      "expectedAnswer": "I will receive a Master of Science, or MSc, in Advanced Data Science from Bangor University.",
+      "preparationTime": 10
+    },
+    {
+      "id": 12,
+      "difficulty": "Beginner",
+      "question": "Do you know the level of your course?",
+      "expectedAnswer": "Yes. It is a Level 7 postgraduate qualification under the UK Regulated Qualifications Framework, or RQF.",
+      "preparationTime": 10
+    }
+  ]
+}
