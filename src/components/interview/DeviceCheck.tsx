@@ -152,7 +152,7 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
         cancelAnimationFrame(animFrameRef.current);
       }
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close().catch(() => {});
+        audioContextRef.current.close().catch(() => { });
       }
       // If user navigates back or unmounts without clicking Start Interview, stop tracks
       if (!hasProceededRef.current && streamRef.current) {
@@ -169,37 +169,36 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+    <div className="max-w-4xl mx-auto px-4 py-3 md:py-5">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-4 sm:mb-5">
         <button
           onClick={onBack}
-          className="text-sm text-slate-500 hover:text-slate-800 transition-colors mb-3 flex items-center gap-1.5 cursor-pointer font-medium"
+          className="text-sm text-slate-500 hover:text-slate-800 transition-colors mb-2 flex items-center gap-1.5 cursor-pointer font-medium"
         >
           ← Back to Overview
         </button>
-        <h2 className="text-2xl md:text-3xl font-bold text-slate-900 font-heading">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 font-heading">
           Interview Setup & Device Check
         </h2>
-        <p className="text-slate-600 text-sm mt-1">
+        <p className="text-slate-600 text-xs sm:text-sm mt-1">
           Verify your camera and microphone are operating correctly before beginning the interview.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
         {/* Left Column: Camera Preview */}
-        <div className="lg:col-span-7 space-y-4">
+        <div className="lg:col-span-7 space-y-3">
           <div className="relative aspect-video w-full rounded-2xl bg-slate-900 border border-slate-200 overflow-hidden shadow-lg flex items-center justify-center">
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
-              className={`w-full h-full object-cover transform -scale-x-100 ${
-                deviceStatus.cameraGranted ? 'block' : 'hidden'
-              }`}
+              className={`w-full h-full object-cover transform -scale-x-100 ${deviceStatus.cameraGranted ? 'block' : 'hidden'
+                }`}
             />
-            
+
             {!deviceStatus.cameraGranted && (
               <div className="p-6 text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
@@ -235,26 +234,25 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
           </div>
 
           {/* Test Controls */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full">
             <button
               onClick={startMediaCheck}
               disabled={isRequesting}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold shadow-sm transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-1.5 h-8 md:h-9 px-3 md:px-4 py-1 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[10px] md:text-[11px] lg:text-[12px] font-semibold shadow-sm transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap leading-none shrink-0"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRequesting ? 'animate-spin' : ''}`} />
-              <span>{isRequesting ? 'Testing Devices...' : 'Test Camera & Microphone'}</span>
+              <RefreshCw className={`w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 ${isRequesting ? 'animate-spin' : ''}`} />
+              <span className="whitespace-nowrap leading-none">{isRequesting ? 'Testing Devices...' : 'Test Camera & Microphone'}</span>
             </button>
 
-            <div className="flex items-center gap-2 text-xs">
-              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md font-medium ${deviceStatus.cameraGranted ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
-                <Camera className="w-3.5 h-3.5" />
-                <span>{deviceStatus.cameraGranted ? 'Camera ready' : 'Camera off'}</span>
-              </span>
-              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md font-medium ${deviceStatus.microphoneGranted ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
-                <Mic className="w-3.5 h-3.5" />
-                <span>{deviceStatus.microphoneGranted ? 'Microphone ready' : 'Mic off'}</span>
-              </span>
-            </div>
+            <span className={`inline-flex items-center justify-center gap-1.5 h-8 md:h-9 px-2.5 md:px-3 py-1 rounded-lg font-medium text-[10px] md:text-[11px] lg:text-[12px] whitespace-nowrap leading-none shrink-0 ${deviceStatus.cameraGranted ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
+              <Camera className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
+              <span className="whitespace-nowrap leading-none">{deviceStatus.cameraGranted ? 'Camera ready' : 'Camera off'}</span>
+            </span>
+
+            <span className={`inline-flex items-center justify-center gap-1.5 h-8 md:h-9 px-2.5 md:px-3 py-1 rounded-lg font-medium text-[10px] md:text-[11px] lg:text-[12px] whitespace-nowrap leading-none shrink-0 ${deviceStatus.microphoneGranted ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
+              <Mic className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
+              <span className="whitespace-nowrap leading-none">{deviceStatus.microphoneGranted ? 'Microphone ready' : 'Mic off'}</span>
+            </span>
           </div>
 
           {/* Error Message Box */}
@@ -270,36 +268,36 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
         </div>
 
         {/* Right Column: Instructions & Proceed */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+        <div className="lg:col-span-5 space-y-4">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
             <h3 className="text-base font-bold text-slate-900 font-heading flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Before you begin</span>
             </h3>
 
-            <ul className="space-y-3 text-sm text-slate-600">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-600">
               <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                 <span>Make sure your camera is working.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                 <span>Make sure your microphone is working.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                 <span>Find a quiet place without background distractions.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                 <span>You will have 10 seconds to prepare for each question.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                 <span>Recording will begin automatically after the preparation timer.</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                 <span>AI feedback will be provided after each answer.</span>
               </li>
             </ul>
