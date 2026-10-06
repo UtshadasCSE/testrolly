@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { HowItWorksFan } from './HowItWorksFan';
 
 interface HeroSectionProps {
   onStart: () => void;
+  onPracticeMore?: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ onStart, onPracticeMore }) => {
   const shouldReduceMotion = useReducedMotion();
 
   const getTransition = (delay: number) => ({
@@ -58,20 +59,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onStart }) => {
           Practice real interview questions, record your answers, and get AI-powered feedback to improve your confidence before the real interview.
         </motion.p>
 
-        {/* Primary Single CTA Button */}
+        {/* Primary and Secondary CTA Buttons */}
         <motion.div
           initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={getTransition(0.24)}
-          className="pt-2 flex justify-center"
+          className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
         >
           <button
             type="button"
             onClick={onStart}
-            className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all duration-150 active:scale-[0.98] cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all duration-150 active:scale-[0.98] cursor-pointer"
           >
             <span>Get Started</span>
             <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={onPracticeMore}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 hover:border-slate-400 font-medium text-base shadow-sm hover:shadow transition-all duration-150 active:scale-[0.98] cursor-pointer"
+          >
+            <BookOpen className="w-4 h-4 text-slate-500" />
+            <span>Practice More</span>
           </button>
         </motion.div>
       </div>

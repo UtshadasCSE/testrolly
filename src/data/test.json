@@ -85,6 +85,62 @@
       "question": "Do you know the level of your course?",
       "expectedAnswer": "Yes. It is a Level 7 postgraduate qualification under the UK Regulated Qualifications Framework, or RQF.",
       "preparationTime": 10
+    },
+    {
+      "id": 13,
+      "difficulty": "Intermediate",
+      "question": "Are you aware of your course? Tell me about your course modules.",
+      "expectedAnswer": "Yes, I am fully aware of my course and its modules. I will study the MSc Advanced Data Science at Bangor University. The course is worth 180 credits and includes six compulsory modules and a 60-credit individual project.\n\nThe six compulsory modules are:\n\n1. Information Visualisation – 20 credits\n2. High Performance Computing – 20 credits\n3. Data Science – 20 credits\n4. Natural Language Processing – 20 credits\n5. Machine Learning – 20 credits\n6. Advanced Research Methods – 20 credits\n\nIn addition, I will complete the MSc Individual Project, which is worth 60 credits.\n\nI am particularly interested in Machine Learning and Natural Language Processing because I want to develop my knowledge of how data can be used to identify patterns, build predictive systems, and work with human language data.",
+      "preparationTime": 10
+    },
+    {
+      "id": 14,
+      "difficulty": "Intermediate",
+      "question": "How is your course assessed? What is the assessment method of the course?",
+      "expectedAnswer": "My course is assessed in different ways depending on the module. These include coursework, practical assignments, reports, examinations, presentations, and project work.\n\nI think this is important for a Data Science course because it will assess not only my theoretical understanding, but also how well I can apply my knowledge to practical problems.\n\nI will also complete a 60-credit MSc Individual Project, where I’ll have the opportunity to apply the knowledge and skills I’ve developed throughout the course to a data science-related project.\n\nSo overall, my course is not based only on examinations. It combines both theoretical and practical assessments.",
+      "preparationTime": 10
+    },
+    {
+      "id": 15,
+      "difficulty": "Intermediate",
+      "question": "How is your course structured?",
+      "expectedAnswer": "My MSc Advanced Data Science is a one-year full-time course worth 180 credits, and it is divided into three semesters.\n\nIn the first semester, I’ll study Information Visualisation, High Performance Computing, and Data Science. Each module is worth 20 credits.\n\nThen, in the second semester, I’ll study Natural Language Processing, Machine Learning, and Advanced Research Methods, again 20 credits each.\n\nIn the third semester, I’ll complete my 60-credit MSc Individual Project. This is particularly important because it will give me the opportunity to apply what I’ve learned from the taught modules to a data science-related project.\n\nSo overall, the course starts with the taught modules and then moves towards the individual project, giving me both theoretical knowledge and practical experience in Advanced Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 16,
+      "difficulty": "Intermediate",
+      "question": "How is this course related to your previous education?",
+      "expectedAnswer": "This course is closely related to my previous education because I completed my bachelor’s degree in Computer Science and Engineering from Daffodil International University.\n\nDuring my bachelor’s, I developed a foundation in areas like programming, algorithms, computing, and problem-solving. So, I already have a Computer Science background, but now I want to specialise more in working with data.\n\nFor example, modules like Data Science, Machine Learning, and Information Visualisation will help me build on what I already know and develop more specialised skills in analysing data, identifying patterns, applying machine learning techniques, and presenting data effectively.\n\nAlso, I currently work as a Frontend Developer, so I already have practical experience working with technology and developing digital solutions.\n\nSo, I don't see this MSc as changing my field. I see it as the next step from my Computer Science background, where I can specialise in Data Science and prepare for my future career as a Data Analyst and eventually progress into Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 18,
+      "difficulty": "Intermediate",
+      "question": "Which specific aspects of this course have attracted you? Which modules are you most looking forward to studying and why?",
+      "expectedAnswer": "What attracted me most to this course is its practical focus and how closely it matches my future career goal in Data Science.\n\nThe three modules I’m most looking forward to are Data Science, Machine Learning, and Information Visualisation.\n\nI’m particularly interested in Data Science because I want to improve my ability to work with different types of data, analyse them, and identify useful patterns.\n\nMachine Learning is also very interesting to me because I’ll learn about areas such as regression, classification, and neural networks, and how to build and evaluate machine learning solutions.\n\nI’m also looking forward to Information Visualisation because analysing data is not enough. I also need to be able to present complex findings in a clear and meaningful way.\n\nSo, these modules really attracted me because they build on my Computer Science background and will give me the specialised skills I need to move towards my future career in Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 19,
+      "difficulty": "Intermediate",
+      "question": "Why did you choose your particular area of study? Why did you choose this course, MSc Advanced Data Science?",
+      "expectedAnswer": "I chose MSc Advanced Data Science because it feels like a natural next step from my Computer Science and Engineering background and my experience as a Frontend Developer.\n\nMy CSE degree gave me a good foundation in programming, computing, and problem-solving. Then, while working on different web development projects, I became more curious about the data behind those applications, like how data is collected, analysed, and used to identify patterns or make better decisions. That’s where my interest in Data Science really started.\n\nWhen I looked at this course, modules like Data Science, Machine Learning, and Information Visualisation really matched what I want to learn. I’ll also study Natural Language Processing and High Performance Computing, which will give me broader knowledge of advanced data-related technologies.\n\nI chose this course instead of another general Computer Science or Software Development master's because I already have a CSE degree and development experience. At this stage, I want to specialise rather than repeat similar subjects.\n\nAfter completing my MSc, I plan to return to Bangladesh and start working in a Data Analyst role. Then, as I gain more practical experience, my long-term goal is to progress into Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 20,
+      "difficulty": "Intermediate",
+      "question": "Did you consider studying any other courses? If yes, why this course over other courses?",
+      "expectedAnswer": "No, I didn’t seriously consider another course because I was quite clear about the area I wanted to specialise in.\n\nI already have a Computer Science and Engineering degree and practical experience in web development, so I didn’t want to choose another general Computer Science or Software Development course and repeat similar areas.\n\nInstead, I wanted to specialise in Data Science because it matches both my existing technical background and my future career goal. When I looked at this course, modules like Data Science, Machine Learning, and Information Visualisation were particularly relevant to what I want to learn.\n\nSo, MSc Advanced Data Science was a more suitable choice for me because it allows me to build on what I already know while developing specialised skills for my future career in Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 21,
+      "difficulty": "Intermediate",
+      "question": "What knowledge and skills will you gain from this course?",
+      "expectedAnswer": "Through this course, I’ll develop both advanced knowledge and practical skills in Data Science.\n\nFor example, I’ll learn how to work with different types of data, analyse datasets, identify useful patterns, and choose suitable data science techniques for different problems.\n\nI’ll also develop my Machine Learning skills in areas like regression, classification, clustering, and neural networks. This will help me understand how to build, test, and evaluate machine learning solutions.\n\nAnother important skill I’ll develop is Information Visualisation. I’ll learn how to take complex data and present the findings in a clear and meaningful way.\n\nApart from these technical skills, the course will also improve my programming, problem-solving, research, critical thinking, and data analysis skills, especially through my MSc Individual Project.\n\nOverall, these skills will build on my existing Computer Science background and help me move from frontend development towards my future career in Data Science.",
+      "preparationTime": 10
     }
   ]
 }

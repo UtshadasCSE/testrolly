@@ -30,7 +30,11 @@ import { AlertCircle, RefreshCw, Square, Loader2 } from 'lucide-react';
 
 const testData = interviewDataRaw as InterviewData;
 
-export const TestInterview: React.FC = () => {
+interface TestInterviewProps {
+  onNavigatePractice?: () => void;
+}
+
+export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice }) => {
   // Navigation & Interview State
   const [phase, setPhase] = useState<InterviewPhase>('intro');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -400,6 +404,7 @@ export const TestInterview: React.FC = () => {
         {phase === 'intro' && (
           <InterviewIntro
             onStart={() => setPhase('device-check')}
+            onPracticeMore={onNavigatePractice}
             questionCount={questions.length}
           />
         )}
