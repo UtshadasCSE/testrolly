@@ -3,7 +3,7 @@ import { Sparkles, Brain, Cpu, FileCheck } from 'lucide-react';
 
 const PROCESSING_STEPS = [
   { text: 'Processing your recording...', icon: Cpu },
-  { text: 'Understanding your answer...', icon: Brain },
+  { text: 'Transcribing your answer...', icon: Brain },
   { text: 'Evaluating your response...', icon: Sparkles },
   { text: 'Preparing your feedback...', icon: FileCheck },
 ];
@@ -38,7 +38,7 @@ export const ProcessingState: React.FC = () => {
           {PROCESSING_STEPS[currentStepIndex].text}
         </h3>
         <p className="text-sm text-slate-600 max-w-sm mx-auto">
-          Google Gemini is analyzing your spoken response for semantic accuracy, structure, and natural delivery.
+          AI is analyzing your spoken response for semantic accuracy, structure, and natural delivery.
         </p>
       </div>
 

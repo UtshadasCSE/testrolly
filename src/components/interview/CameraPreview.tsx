@@ -14,8 +14,14 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+    const video = videoRef.current;
+    if (video && stream) {
+      if (video.srcObject !== stream) {
+        video.srcObject = stream;
+      }
+      video.play().catch((err) => {
+        console.warn('[CameraPreview] Play error (autoplay handled):', err);
+      });
     }
   }, [stream]);
 

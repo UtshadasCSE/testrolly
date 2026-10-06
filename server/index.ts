@@ -4,7 +4,7 @@ import multer from 'multer';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { evaluateAnswerWithGemini } from './geminiService';
+import { evaluateAnswerWithCloudflare } from './cloudflareService';
 
 // Load environment variables (.env.local takes precedence over .env)
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -38,11 +38,17 @@ function getInterviewData() {
 
 // Health check and config status endpoint (NEVER exposes the key)
 app.get('/api/health', (req, res) => {
-  const key = process.env.GEMINI_API_KEY;
-  const isConfigured = Boolean(key && key.trim() !== '' && key !== 'MY_PRIVATE_GEMINI_API_KEY');
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  const isConfigured = Boolean(
+    accountId &&
+    apiToken &&
+    accountId.trim() !== '' &&
+    apiToken.trim() !== ''
+  );
   res.json({
     status: 'ok',
-    geminiConfigured: isConfigured,
+    cloudflareConfigured: isConfigured,
     timestamp: new Date().toISOString(),
   });
 });
@@ -79,7 +85,7 @@ app.post('/api/evaluate', upload.single('audio'), async (req, res) => {
       audioBuffer = Buffer.from(audioBase64, 'base64');
     }
 
-    const feedback = await evaluateAnswerWithGemini({
+    const feedback = await evaluateAnswerWithCloudflare({
       question: foundQuestion.question,
       expectedAnswer: foundQuestion.expectedAnswer,
       durationSeconds: Math.round(duration),
@@ -92,26 +98,23 @@ app.post('/api/evaluate', upload.single('audio'), async (req, res) => {
   } catch (error: any) {
     console.error('Evaluation error:', error?.message || error);
 
-    if (error?.message === 'GEMINI_NOT_CONFIGURED') {
+    if (error?.message === 'CLOUDFLARE_NOT_CONFIGURED') {
       return res.status(503).json({
-        error: 'GEMINI_NOT_CONFIGURED',
-        message: 'Gemini API is not configured. Add GEMINI_API_KEY to your local environment file and restart the development server.',
+        error: 'CLOUDFLARE_NOT_CONFIGURED',
+        message: 'Cloudflare Workers AI is not configured. Add CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN to your environment variables and restart the server.',
       });
     }
 
-    // Clean user-safe error message
-    let safeMessage = 'An unexpected error occurred during AI analysis. Please try again.';
-    if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('API key not valid')) {
-      safeMessage = 'The configured Gemini API key is invalid. Please verify your GEMINI_API_KEY.';
-    } else if (error?.message?.includes('QUOTA_EXCEEDED') || error?.message?.includes('429')) {
-      safeMessage = 'Gemini API quota exceeded or rate limit reached. Please wait a moment and retry.';
-    } else if (error?.message) {
-      safeMessage = error.message;
+    if (error?.message === 'INAUDIBLE_TRANSCRIPT') {
+      return res.status(422).json({
+        error: 'INAUDIBLE_TRANSCRIPT',
+        message: "We couldn't clearly understand your recorded answer. Please try recording your answer again.",
+      });
     }
 
     return res.status(500).json({
       error: 'EVALUATION_FAILED',
-      message: safeMessage,
+      message: "We couldn't analyze your answer right now. Your recording is safe. Please try again.",
     });
   }
 });
@@ -126,5 +129,5 @@ if (fs.existsSync(distPath)) {
 }
 
 app.listen(PORT, () => {
-  console.log(`✓ Test Interview server listening on port ${PORT}`);
+  console.log(`✓ Testrolly server listening on port ${PORT}`);
 });

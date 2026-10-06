@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import { evaluateAnswerWithGemini } from './geminiService';
+import { evaluateAnswerWithCloudflare } from './cloudflareService';
 
 // Ensure env vars are loaded
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -22,13 +22,19 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
 
   // GET /api/health
   if (req.method === 'GET' && url.startsWith('/api/health')) {
-    const key = process.env.GEMINI_API_KEY;
-    const isConfigured = Boolean(key && key.trim() !== '' && key !== 'MY_PRIVATE_GEMINI_API_KEY');
+    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+    const isConfigured = Boolean(
+      accountId &&
+      apiToken &&
+      accountId.trim() !== '' &&
+      apiToken.trim() !== ''
+    );
     res.setHeader('Content-Type', 'application/json');
     res.writeHead(200);
     res.end(JSON.stringify({
       status: 'ok',
-      geminiConfigured: isConfigured,
+      cloudflareConfigured: isConfigured,
       timestamp: new Date().toISOString(),
     }));
     return true;
@@ -104,7 +110,7 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
         return true;
       }
 
-      const feedback = await evaluateAnswerWithGemini({
+      const feedback = await evaluateAnswerWithCloudflare({
         question: foundQuestion.question,
         expectedAnswer: foundQuestion.expectedAnswer,
         durationSeconds: Math.round(durationSeconds),
@@ -118,31 +124,31 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
       res.end(JSON.stringify(feedback));
       return true;
     } catch (err: any) {
-      console.error('API evaluate error:', err?.message || err);
+      console.error('[Testrolly API] Evaluation error:', err?.message || err);
       res.setHeader('Content-Type', 'application/json');
 
-      if (err?.message === 'GEMINI_NOT_CONFIGURED') {
+      if (err?.message === 'CLOUDFLARE_NOT_CONFIGURED') {
         res.writeHead(503);
         res.end(JSON.stringify({
-          error: 'GEMINI_NOT_CONFIGURED',
-          message: 'Gemini API is not configured. Add GEMINI_API_KEY to your local environment file and restart the development server.',
+          error: 'CLOUDFLARE_NOT_CONFIGURED',
+          message: 'Cloudflare Workers AI is not configured on the server. Please configure CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN in environment variables.',
         }));
         return true;
       }
 
-      let safeMessage = 'An unexpected error occurred during AI analysis. Please try again.';
-      if (err?.message?.includes('API_KEY_INVALID') || err?.message?.includes('API key not valid')) {
-        safeMessage = 'The configured Gemini API key is invalid. Please verify your GEMINI_API_KEY.';
-      } else if (err?.message?.includes('QUOTA_EXCEEDED') || err?.message?.includes('429')) {
-        safeMessage = 'Gemini API quota exceeded or rate limit reached. Please wait a moment and retry.';
-      } else if (err?.message) {
-        safeMessage = err.message;
+      if (err?.message === 'INAUDIBLE_TRANSCRIPT') {
+        res.writeHead(422);
+        res.end(JSON.stringify({
+          error: 'INAUDIBLE_TRANSCRIPT',
+          message: "We couldn't clearly understand your recorded answer. Please try recording your answer again.",
+        }));
+        return true;
       }
 
       res.writeHead(500);
       res.end(JSON.stringify({
         error: 'EVALUATION_FAILED',
-        message: safeMessage,
+        message: "We couldn't analyze your answer right now. Your recording is safe. Please try again.",
       }));
       return true;
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Timer, Zap } from 'lucide-react';
 
 interface QuestionTimerProps {
@@ -13,22 +13,23 @@ export const QuestionTimer: React.FC<QuestionTimerProps> = ({
   onSkip,
 }) => {
   const [secondsLeft, setSecondsLeft] = useState<number>(initialSeconds);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  const completedCalledRef = useRef<boolean>(false);
 
   useEffect(() => {
+    completedCalledRef.current = false;
     setSecondsLeft(initialSeconds);
-  }, [initialSeconds]);
-
-  useEffect(() => {
-    if (secondsLeft <= 0) {
-      onComplete();
-      return;
-    }
 
     const timer = setInterval(() => {
       setSecondsLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          onComplete();
+          if (!completedCalledRef.current) {
+            completedCalledRef.current = true;
+            onCompleteRef.current();
+          }
           return 0;
         }
         return prev - 1;
@@ -36,7 +37,18 @@ export const QuestionTimer: React.FC<QuestionTimerProps> = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [secondsLeft, onComplete]);
+  }, [initialSeconds]);
+
+  const handleSkip = () => {
+    if (!completedCalledRef.current) {
+      completedCalledRef.current = true;
+      if (onSkip) {
+        onSkip();
+      } else {
+        onCompleteRef.current();
+      }
+    }
+  };
 
   // Circle progress calculation
   const total = initialSeconds > 0 ? initialSeconds : 10;
@@ -97,7 +109,7 @@ export const QuestionTimer: React.FC<QuestionTimerProps> = ({
       {onSkip && (
         <button
           type="button"
-          onClick={onSkip}
+          onClick={handleSkip}
           className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-emerald-700 transition-colors pt-1 cursor-pointer font-medium"
         >
           <Zap className="w-3.5 h-3.5 text-emerald-600" />

@@ -20,6 +20,8 @@ import { QuestionFeedback } from '../components/interview/QuestionFeedback';
 import { OverallFeedback } from '../components/interview/OverallFeedback';
 import { Navbar } from '../components/navbar/Navbar';
 import {
+  blobToBase64,
+  extractAudioFromBlob,
   formatDuration,
   getSupportedVideoMimeType,
   stopMediaStream,
@@ -55,14 +57,28 @@ export const TestInterview: React.FC = () => {
   const currentQuestion: IInterviewQuestion | undefined = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex >= questions.length - 1;
 
-  // Cleanup on unmount
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  mediaStreamRef.current = mediaStream;
+
+  const currentRecordingUrlRef = useRef<string | null>(null);
+  currentRecordingUrlRef.current = currentRecordingUrl;
+
+  // Cleanup ONLY on component unmount
   useEffect(() => {
     return () => {
-      stopMediaStream(mediaStream);
-      if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
-      if (currentRecordingUrl) URL.revokeObjectURL(currentRecordingUrl);
+      stopMediaStream(mediaStreamRef.current);
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+      }
+      if (currentRecordingUrlRef.current) {
+        try {
+          URL.revokeObjectURL(currentRecordingUrlRef.current);
+        } catch {
+          // ignore
+        }
+      }
     };
-  }, [currentRecordingUrl, mediaStream]);
+  }, []);
 
   // Handler: When Device Check completes successfully
   const handleDeviceCheckReady = (stream: MediaStream) => {
@@ -154,13 +170,11 @@ export const TestInterview: React.FC = () => {
         setIsRecording(false);
       };
 
-      // Request timeslices every 500ms to collect stable chunks
       recorder.start(500);
       setIsRecording(true);
       setPhase('recording');
       recordingStartTimeRef.current = Date.now();
 
-      // Start elapsed timer
       if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
       recordingTimerRef.current = window.setInterval(() => {
         const elapsedSecs = Math.floor((Date.now() - recordingStartTimeRef.current) / 1000);
@@ -226,28 +240,57 @@ export const TestInterview: React.FC = () => {
     setPhase('processing');
 
     try {
-      const formData = new FormData();
-      formData.append('questionId', currentQuestion.id.toString());
-      formData.append('durationSeconds', recordingDuration.toString());
-      formData.append('audio', currentRecordingBlob, 'recording.webm');
-      formData.append('audioMimeType', currentRecordingBlob.type || 'video/webm');
+      console.log(`[Testrolly Analysis] Video size: ${(currentRecordingBlob.size / 1024 / 1024).toFixed(2)} MB, MIME: ${currentRecordingBlob.type || 'video/webm'}`);
+      
+      // Extract pristine 16kHz mono WAV audio for Cloudflare Whisper STT
+      const audioBlob = await extractAudioFromBlob(currentRecordingBlob);
+      console.log(`[Testrolly Analysis] Extracted audio size: ${(audioBlob.size / 1024).toFixed(1)} KB, MIME: ${audioBlob.type}`);
+
+      const base64Audio = await blobToBase64(audioBlob);
 
       const response = await fetch('/api/evaluate', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          questionId: currentQuestion.id,
+          durationSeconds: recordingDuration,
+          audioBase64: base64Audio,
+          audioMimeType: audioBlob.type || 'audio/wav',
+        }),
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      console.log(`[Testrolly API] Status: ${response.status}, Content-Type: ${contentType}`);
 
-      if (!response.ok) {
-        throw new Error(data.message || `Evaluation request failed with status ${response.status}`);
+      let data: any = null;
+      if (contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (parseErr) {
+          console.error('[Testrolly API] Failed to parse JSON response:', parseErr);
+        }
+      } else {
+        const rawText = await response.text();
+        console.warn('[Testrolly API] Received non-JSON response from server/Vercel:', rawText.slice(0, 300));
+      }
+
+      if (!response.ok || !data) {
+        let userFriendlyMessage = "We couldn't analyze your answer right now. Your recording is safe. Please try again.";
+        if (data?.message) {
+          userFriendlyMessage = data.message;
+        } else if (response.status === 413) {
+          userFriendlyMessage = "The recording payload was too large for the server. Your recording is safe, please try a slightly shorter answer.";
+        }
+        throw new Error(userFriendlyMessage);
       }
 
       setCurrentFeedback(data);
       setPhase('feedback');
     } catch (err: any) {
       console.error('[Testrolly Recording] Evaluation API error:', err);
-      setAnalysisError(err.message || 'We could not analyze your answer. Your recording is safe.');
+      setAnalysisError(err.message || "We couldn't analyze your answer right now. Your recording is safe. Please try again.");
       setPhase('review'); // Keep recording safe in review screen
     } finally {
       setIsAnalyzing(false);
@@ -385,6 +428,7 @@ export const TestInterview: React.FC = () => {
             {/* 3. Large Centered Camera Video (~70-80% desktop width, 16:9 aspect ratio) */}
             <div className="w-full md:w-[90%] lg:w-[80%] mx-auto">
               <CameraPreview
+                key={`cam-${currentQuestion.id}`}
                 stream={mediaStream}
                 isRecording={isRecording}
                 recordingDuration={recordingDuration}
@@ -407,6 +451,7 @@ export const TestInterview: React.FC = () => {
             <div className="w-full md:w-[90%] lg:w-[80%] mx-auto">
               {phase === 'preparing' && (
                 <QuestionTimer
+                  key={`timer-${currentQuestion.id}`}
                   initialSeconds={currentQuestion.preparationTime || 10}
                   onComplete={handlePreparationFinished}
                   onSkip={handlePreparationFinished}
@@ -459,15 +504,14 @@ export const TestInterview: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
                   <div>
-                    <p className="font-bold text-rose-800">We couldn't analyze your answer.</p>
-                    <p className="text-xs text-rose-700 mt-0.5 leading-relaxed">{analysisError}</p>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Your recording is safe.</p>
+                    <p className="font-bold text-rose-800">We couldn't analyze your answer right now.</p>
+                    <p className="text-xs text-rose-700 mt-0.5 leading-relaxed">Your recording is safe. Please try again.</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={handleAnalyzeAnswer}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shrink-0 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shrink-0 cursor-pointer shadow-sm transition-all active:scale-[0.98]"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Retry Analysis</span>

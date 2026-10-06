@@ -87,7 +87,7 @@ export const QuestionFeedback: React.FC<QuestionFeedbackProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-wider">
             <MessageSquareQuote className="w-4 h-4 text-emerald-600" />
-            <span>Spoken Transcript (What Gemini Heard)</span>
+            <span>Spoken Transcript (What AI Heard)</span>
           </div>
           <button
             onClick={() => setShowFullTranscript(!showFullTranscript)}

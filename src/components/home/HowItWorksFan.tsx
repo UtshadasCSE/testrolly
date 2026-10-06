@@ -13,7 +13,7 @@ const stepsData: StepCardData[] = [
   {
     number: '02',
     title: 'AI Feedback',
-    description: 'Gemini analyzes your answer for accuracy, relevance, clarity, fluency, and naturalness.',
+    description: 'AI analyzes your answer for accuracy, relevance, clarity, fluency, and naturalness.',
     icon: Sparkles,
     isFeatured: true,
   },
