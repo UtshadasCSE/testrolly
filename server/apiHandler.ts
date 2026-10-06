@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import path from 'path';
 import dotenv from 'dotenv';
-import { evaluateAnswerWithCloudflare } from './cloudflareService';
-import { getInterviewQuestionById } from './interviewQuestions';
+import { evaluateAnswerWithCloudflare } from './cloudflareService.js';
+import { getInterviewQuestionById } from './interviewQuestions.js';
 
 // Ensure env vars are loaded
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });

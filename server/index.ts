@@ -4,8 +4,8 @@ import multer from 'multer';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { evaluateAnswerWithCloudflare } from './cloudflareService';
-import { getInterviewQuestionById } from './interviewQuestions';
+import { evaluateAnswerWithCloudflare } from './cloudflareService.js';
+import { getInterviewQuestionById } from './interviewQuestions.js';
 
 // Load environment variables (.env.local takes precedence over .env)
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });

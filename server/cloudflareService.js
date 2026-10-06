@@ -1,5 +1,3 @@
-import { InterviewFeedback, ScoreStatus } from '../src/types/interview';
-
 // Centralized Cloudflare Workers AI Model Configurations
 export const TRANSCRIPTION_MODEL = process.env.CLOUDFLARE_STT_MODEL || '@cf/openai/whisper';
 export const EVALUATION_MODEL = process.env.CLOUDFLARE_LLM_MODEL || '@cf/meta/llama-3.1-8b-instruct';
@@ -16,14 +14,7 @@ CRITICAL RULES:
 6. Assess textual indicators for fluency and grammar from the spoken transcript, keeping in mind speech-to-text nuances.
 7. Return ONLY valid structured JSON matching the requested schema without markdown fences or extraneous text.`;
 
-interface CloudflareApiResponse<T = any> {
-  success: boolean;
-  errors?: Array<{ code: number; message: string }>;
-  messages?: Array<string>;
-  result: T;
-}
-
-function getCloudflareCredentials(): { accountId: string; apiToken: string } {
+function getCloudflareCredentials() {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
 
@@ -37,16 +28,16 @@ function getCloudflareCredentials(): { accountId: string; apiToken: string } {
 /**
  * Executes a Cloudflare Workers AI REST request with exponential backoff for transient errors.
  */
-async function callCloudflareAi<T = any>(
-  model: string,
-  payload: any,
-  contentType: string = 'application/json'
-): Promise<T> {
+async function callCloudflareAi(
+  model,
+  payload,
+  contentType = 'application/json'
+) {
   const { accountId, apiToken } = getCloudflareCredentials();
   const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`;
 
   const maxRetries = 3; // 1 initial request + up to 3 retries
-  let lastError: any = null;
+  let lastError = null;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -81,7 +72,7 @@ async function callCloudflareAi<T = any>(
         }
       }
 
-      const json = (await response.json()) as CloudflareApiResponse<T>;
+      const json = await response.json();
 
       if (!json.success) {
         const errorMsg = json.errors?.[0]?.message || 'Unknown Cloudflare Workers AI error';
@@ -98,7 +89,7 @@ async function callCloudflareAi<T = any>(
       }
 
       return json.result;
-    } catch (err: any) {
+    } catch (err) {
       lastError = err;
 
       if (err?.message === 'CLOUDFLARE_AUTH_ERROR' || err?.message === 'CLOUDFLARE_MODEL_NOT_FOUND' || err?.message === 'CLOUDFLARE_NOT_CONFIGURED') {
@@ -120,10 +111,10 @@ async function callCloudflareAi<T = any>(
  * Transcribe candidate's audio recording using Cloudflare Speech-to-Text (Whisper).
  */
 export async function transcribeAudioWithCloudflare(
-  audioBuffer?: Buffer,
-  audioMimeType?: string,
-  transcriptFallback?: string
-): Promise<string> {
+  audioBuffer,
+  audioMimeType,
+  transcriptFallback
+) {
   if (!audioBuffer || audioBuffer.length === 0) {
     if (transcriptFallback && transcriptFallback.trim().length > 0) {
       return transcriptFallback.trim();
@@ -134,7 +125,7 @@ export async function transcribeAudioWithCloudflare(
   console.log(`[Testrolly AI] Transcription started using model: ${TRANSCRIPTION_MODEL} (${(audioBuffer.length / (1024 * 1024)).toFixed(2)} MB)`);
 
   try {
-    const result = await callCloudflareAi<{ text?: string; vtt?: string; word_count?: number }>(
+    const result = await callCloudflareAi(
       TRANSCRIPTION_MODEL,
       audioBuffer,
       'application/octet-stream'
@@ -169,7 +160,7 @@ export async function transcribeAudioWithCloudflare(
     const words = transcript.split(/\s+/).filter(Boolean).length;
     console.log(`[Testrolly AI] Transcription successful (${words} words): "${transcript.slice(0, 60)}..."`);
     return transcript;
-  } catch (err: any) {
+  } catch (err) {
     if (err?.message === 'INAUDIBLE_TRANSCRIPT') {
       throw err;
     }
@@ -185,10 +176,10 @@ export async function transcribeAudioWithCloudflare(
 /**
  * Deterministically counts common filler words in the transcript.
  */
-function extractFillerWords(transcript: string): { count: number; words: { word: string; count: number }[] } {
+function extractFillerWords(transcript) {
   const fillers = ['um', 'uh', 'er', 'erm', 'like', 'you know', 'i mean', 'actually', 'basically', 'sort of', 'kind of'];
   const text = transcript.toLowerCase();
-  const found: { [word: string]: number } = {};
+  const found = {};
   let totalCount = 0;
 
   for (const filler of fillers) {
@@ -207,12 +198,7 @@ function extractFillerWords(transcript: string): { count: number; words: { word:
 /**
  * Evaluates candidate's transcript against the question and expected answer using Cloudflare Text LLM.
  */
-export async function evaluateTranscriptWithCloudflare(params: {
-  question: string;
-  expectedAnswer: string;
-  transcript: string;
-  durationSeconds: number;
-}): Promise<InterviewFeedback> {
+export async function evaluateTranscriptWithCloudflare(params) {
   const { question, expectedAnswer, transcript, durationSeconds } = params;
 
   console.log(`[Testrolly AI] Evaluation started using model: ${EVALUATION_MODEL}`);
@@ -266,7 +252,7 @@ Return strictly valid JSON with this exact schema:
     max_tokens: 1500,
   });
 
-  const result = await callCloudflareAi<any>(EVALUATION_MODEL, payload, 'application/json');
+  const result = await callCloudflareAi(EVALUATION_MODEL, payload, 'application/json');
 
   let rawContent = '';
   if (result?.response) {
@@ -282,7 +268,7 @@ Return strictly valid JSON with this exact schema:
   }
 
   // Parse JSON safely
-  let parsed: any;
+  let parsed;
   try {
     parsed = JSON.parse(rawContent);
   } catch {
@@ -307,18 +293,18 @@ Return strictly valid JSON with this exact schema:
  * Normalizes and validates feedback from Cloudflare Workers AI.
  */
 function normalizeCloudflareFeedback(
-  data: any,
-  transcript: string,
-  durationSeconds: number
-): InterviewFeedback {
-  const clamp = (val: any, fallback: number) => {
+  data,
+  transcript,
+  durationSeconds
+) {
+  const clamp = (val, fallback) => {
     const num = Math.round(Number(val));
     return isNaN(num) ? fallback : Math.max(0, Math.min(100, num));
   };
 
   const overallScore = clamp(data.overallScore, 75);
 
-  let status: ScoreStatus = 'Good';
+  let status = 'Good';
   if (overallScore < 50) {
     status = 'Needs Practice';
   } else if (overallScore < 70) {
@@ -339,7 +325,7 @@ function normalizeCloudflareFeedback(
   // Deterministic metrics calculation
   const wordCount = transcript.split(/\s+/).filter(Boolean).length;
 
-  let lengthStatus: 'Too Short' | 'Good Length' | 'Too Long' = 'Good Length';
+  let lengthStatus = 'Good Length';
   if (durationSeconds < 6 || wordCount < 8) {
     lengthStatus = 'Too Short';
   } else if (durationSeconds > 120 || wordCount > 250) {
@@ -350,7 +336,7 @@ function normalizeCloudflareFeedback(
 
   const rawMem = data.memorization || {};
   const memRisk = clamp(rawMem.risk, 15);
-  let memLevel: 'Low' | 'Moderate' | 'High' = 'Low';
+  let memLevel = 'Low';
   if (memRisk >= 65) memLevel = 'High';
   else if (memRisk >= 35) memLevel = 'Moderate';
 
@@ -388,14 +374,7 @@ function normalizeCloudflareFeedback(
 /**
  * Main orchestrator for Cloudflare Workers AI evaluation.
  */
-export async function evaluateAnswerWithCloudflare(params: {
-  question: string;
-  expectedAnswer: string;
-  durationSeconds: number;
-  audioBuffer?: Buffer;
-  audioMimeType?: string;
-  transcriptFallback?: string;
-}): Promise<InterviewFeedback> {
+export async function evaluateAnswerWithCloudflare(params) {
   // Step 1: Transcribe Audio
   const transcript = await transcribeAudioWithCloudflare(
     params.audioBuffer,

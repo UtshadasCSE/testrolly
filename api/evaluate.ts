@@ -1,5 +1,5 @@
-import { evaluateAnswerWithCloudflare } from '../server/cloudflareService';
-import { getInterviewQuestionById } from '../server/interviewQuestions';
+import { evaluateAnswerWithCloudflare } from '../server/cloudflareService.js';
+import { getInterviewQuestionById } from '../server/interviewQuestions.js';
 
 export const config = {
   api: {
@@ -10,6 +10,8 @@ export const config = {
 };
 
 export default async function handler(req: any, res: any) {
+  console.log('[Testrolly API] Function invoked');
+
   // Set JSON headers immediately
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Cache-Control', 'no-store, max-age=0');
@@ -19,6 +21,15 @@ export default async function handler(req: any, res: any) {
       error: 'METHOD_NOT_ALLOWED',
       message: 'Only POST requests are supported for this endpoint.',
     });
+  }
+
+  // Validate environment configuration safely without logging secrets
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId || !apiToken || accountId.trim() === '' || apiToken.trim() === '') {
+    console.error('[Testrolly API] Environment validation failed: Cloudflare credentials not set');
+  } else {
+    console.log('[Testrolly API] Environment validated');
   }
 
   try {
@@ -57,6 +68,8 @@ export default async function handler(req: any, res: any) {
       }
     }
 
+    console.log('[Testrolly API] Request parsed');
+
     if (questionId === null || isNaN(questionId)) {
       return res.status(400).json({
         error: 'INVALID_REQUEST',
@@ -73,6 +86,16 @@ export default async function handler(req: any, res: any) {
         message: `Question with ID ${questionId} does not exist in interview data.`,
       });
     }
+
+    console.log(`[Testrolly API] Question loaded: #${questionId}`);
+
+    if (audioBuffer && audioBuffer.length > 0) {
+      console.log(`[Testrolly API] Audio received (${(audioBuffer.length / 1024).toFixed(1)} KB, MIME: ${audioMimeType})`);
+    } else {
+      console.log('[Testrolly API] Audio received: none (using fallback if provided)');
+    }
+
+    console.log('[Testrolly AI] Transcription starting');
 
     const feedback = await evaluateAnswerWithCloudflare({
       question: foundQuestion.question,
