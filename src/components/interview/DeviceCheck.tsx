@@ -67,10 +67,6 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
         error: null,
       });
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = userStream;
-      }
-
       try {
         const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
         if (AudioCtx) {
@@ -131,6 +127,23 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
     }
   };
 
+  const hasProceededRef = useRef(false);
+  const streamRef = useRef<MediaStream | null>(null);
+  streamRef.current = stream;
+
+  // Ensure stream is attached to video element as soon as both are available
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video && stream && deviceStatus.cameraGranted) {
+      if (video.srcObject !== stream) {
+        video.srcObject = stream;
+      }
+      video.play().catch((err) => {
+        console.warn('[DeviceCheck] Video playback error (autoplay handled):', err);
+      });
+    }
+  }, [stream, deviceStatus.cameraGranted]);
+
   useEffect(() => {
     startMediaCheck();
 
@@ -141,11 +154,16 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close().catch(() => {});
       }
+      // If user navigates back or unmounts without clicking Start Interview, stop tracks
+      if (!hasProceededRef.current && streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
     };
   }, []);
 
   const handleProceed = () => {
     if (stream && deviceStatus.cameraGranted && deviceStatus.microphoneGranted) {
+      hasProceededRef.current = true;
       onReady(stream);
     }
   };
@@ -172,15 +190,17 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
         {/* Left Column: Camera Preview */}
         <div className="lg:col-span-7 space-y-4">
           <div className="relative aspect-video w-full rounded-2xl bg-slate-900 border border-slate-200 overflow-hidden shadow-lg flex items-center justify-center">
-            {deviceStatus.cameraGranted ? (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover transform -scale-x-100"
-              />
-            ) : (
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`w-full h-full object-cover transform -scale-x-100 ${
+                deviceStatus.cameraGranted ? 'block' : 'hidden'
+              }`}
+            />
+            
+            {!deviceStatus.cameraGranted && (
               <div className="p-6 text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
                   <Camera className="w-6 h-6" />
