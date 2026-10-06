@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { evaluateAnswerWithCloudflare } from './cloudflareService';
+import { getInterviewQuestionById } from './interviewQuestions';
 
 // Load environment variables (.env.local takes precedence over .env)
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -25,16 +26,6 @@ const upload = multer({
     fileSize: 50 * 1024 * 1024, // 50MB
   },
 });
-
-// Load test.json directly from the single source of truth
-function getInterviewData() {
-  const filePath = path.resolve(process.cwd(), 'src/data/test.json');
-  if (!fs.existsSync(filePath)) {
-    throw new Error('Interview data file src/data/test.json not found.');
-  }
-  const rawData = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(rawData);
-}
 
 // Health check and config status endpoint (NEVER exposes the key)
 app.get('/api/health', (req, res) => {
@@ -65,8 +56,7 @@ app.post('/api/evaluate', upload.single('audio'), async (req, res) => {
     }
 
     // Lookup question from test.json
-    const testData = getInterviewData();
-    const foundQuestion = testData.questions?.find((q: any) => q.id === qId);
+    const foundQuestion = getInterviewQuestionById(qId);
 
     if (!foundQuestion) {
       return res.status(404).json({

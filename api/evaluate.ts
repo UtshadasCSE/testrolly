@@ -1,5 +1,5 @@
-import testData from '../src/data/test.json';
 import { evaluateAnswerWithCloudflare } from '../server/cloudflareService';
+import { getInterviewQuestionById } from '../server/interviewQuestions';
 
 export const config = {
   api: {
@@ -65,7 +65,7 @@ export default async function handler(req: any, res: any) {
     }
 
     // Lookup question from test.json (single source of truth)
-    const foundQuestion = testData.questions?.find((q: any) => q.id === questionId);
+    const foundQuestion = getInterviewQuestionById(questionId);
 
     if (!foundQuestion) {
       return res.status(404).json({

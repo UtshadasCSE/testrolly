@@ -1,21 +1,12 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import { evaluateAnswerWithCloudflare } from './cloudflareService';
+import { getInterviewQuestionById } from './interviewQuestions';
 
 // Ensure env vars are loaded
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-
-function getInterviewData() {
-  const filePath = path.resolve(process.cwd(), 'src/data/test.json');
-  if (!fs.existsSync(filePath)) {
-    throw new Error('Interview data file src/data/test.json not found.');
-  }
-  const rawData = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(rawData);
-}
 
 export async function handleApiRequest(req: IncomingMessage, res: ServerResponse): Promise<boolean> {
   const url = req.url || '';
@@ -97,8 +88,7 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
       }
 
       // Lookup question in test.json
-      const testData = getInterviewData();
-      const foundQuestion = testData.questions?.find((q: any) => q.id === questionId);
+      const foundQuestion = getInterviewQuestionById(questionId);
 
       if (!foundQuestion) {
         res.setHeader('Content-Type', 'application/json');
