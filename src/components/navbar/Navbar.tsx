@@ -15,12 +15,14 @@ export const Navbar: React.FC<NavbarProps> = ({ phase, isPracticeMode = false, o
     <header className="sticky top-3 sm:top-4 z-50 w-[calc(100%-24px)] sm:w-[calc(100%-48px)] max-w-6xl mx-auto">
       <div className="h-16 px-4 sm:px-6 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between transition-all duration-200">
         {/* Left Side: Testrolly Brand */}
-        <div
+        <button
+          type="button"
           onClick={onLogoClick}
-          className={onLogoClick ? 'cursor-pointer' : ''}
+          aria-label="Testrolly home"
+          className="flex items-center text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl transition-opacity hover:opacity-90"
         >
           <Logo size="md" />
-        </div>
+        </button>
 
         {/* Right Side: Only Get Started Button or Active Mode */}
         <div>

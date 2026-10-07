@@ -58,7 +58,8 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
           <button
             type="button"
             onClick={onNavigateHome}
-            className="cursor-pointer hover:opacity-90 transition-opacity flex items-center text-left"
+            aria-label="Testrolly home"
+            className="cursor-pointer hover:opacity-90 transition-opacity flex items-center text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl"
           >
             <Logo size="md" />
           </button>

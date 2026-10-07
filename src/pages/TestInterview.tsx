@@ -453,7 +453,10 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         phase={phase}
         isPracticeMode={isPracticeMode}
         onGetStarted={() => setPhase('device-check')}
-        onLogoClick={isPracticeMode ? (onNavigateHome || handleRestartSession) : handleRestartSession}
+        onLogoClick={() => {
+          handleRestartSession();
+          if (onNavigateHome) onNavigateHome();
+        }}
       />
 
       {/* Main Content Area */}
