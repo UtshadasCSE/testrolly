@@ -5,9 +5,16 @@ import { MediaDeviceStatus } from '../../types/interview';
 interface DeviceCheckProps {
   onReady: (stream: MediaStream) => void;
   onBack: () => void;
+  backLabel?: string;
+  actionLabel?: string;
 }
 
-export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => {
+export const DeviceCheck: React.FC<DeviceCheckProps> = ({
+  onReady,
+  onBack,
+  backLabel = '← Back to Overview',
+  actionLabel = 'Start Interview',
+}) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -176,7 +183,7 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
           onClick={onBack}
           className="text-sm text-slate-500 hover:text-slate-800 transition-colors mb-2 flex items-center gap-1.5 cursor-pointer font-medium"
         >
-          ← Back to Overview
+          {backLabel}
         </button>
         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 font-heading">
           Interview Setup & Device Check
@@ -303,13 +310,13 @@ export const DeviceCheck: React.FC<DeviceCheckProps> = ({ onReady, onBack }) => 
             </ul>
           </div>
 
-          {/* Start Interview Action */}
+          {/* Start Interview / Practice Action */}
           <button
             onClick={handleProceed}
             disabled={!deviceStatus.cameraGranted || !deviceStatus.microphoneGranted}
             className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-semibold text-base shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
           >
-            <span>Start Interview</span>
+            <span>{actionLabel}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 

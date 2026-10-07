@@ -12,23 +12,28 @@ import {
   ShieldCheck,
   MessageSquareQuote,
 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { InterviewFeedback } from '../../types/interview';
 import { getMemorizationColors, getScoreColors } from '../../utils/interview';
 
 interface QuestionFeedbackProps {
   feedback: InterviewFeedback;
   isLastQuestion: boolean;
+  isPracticeMode?: boolean;
   onNextQuestion: () => void;
   onFinishInterview: () => void;
   onRetryQuestion: () => void;
+  onBackToQuestions?: () => void;
 }
 
 export const QuestionFeedback: React.FC<QuestionFeedbackProps> = ({
   feedback,
   isLastQuestion,
+  isPracticeMode = false,
   onNextQuestion,
   onFinishInterview,
   onRetryQuestion,
+  onBackToQuestions,
 }) => {
   const [showRetryConfirm, setShowRetryConfirm] = useState(false);
   const [showFullTranscript, setShowFullTranscript] = useState(true);
@@ -268,45 +273,69 @@ export const QuestionFeedback: React.FC<QuestionFeedbackProps> = ({
 
       {/* Action Footer */}
       <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <button
-          type="button"
-          onClick={() => setShowRetryConfirm(true)}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold shadow-sm transition-colors cursor-pointer"
-        >
-          <RotateCcw className="w-4 h-4" />
-          <span>Retry Question</span>
-        </button>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {!isLastQuestion ? (
-            <>
-              <button
-                type="button"
-                onClick={onFinishInterview}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors cursor-pointer"
-              >
-                Finish Early
-              </button>
-              <button
-                type="button"
-                onClick={onNextQuestion}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all cursor-pointer"
-              >
-                <span>Next Question</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </>
-          ) : (
+        {isPracticeMode ? (
+          <>
             <button
               type="button"
-              onClick={onFinishInterview}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all cursor-pointer"
+              onClick={onRetryQuestion}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold shadow-sm transition-all duration-150 cursor-pointer active:scale-[0.98]"
             >
-              <Check className="w-5 h-5" />
-              <span>Finish Interview</span>
+              <RotateCcw className="w-4 h-4 text-emerald-600" />
+              <span>Practice Again</span>
             </button>
-          )}
-        </div>
+
+            <button
+              type="button"
+              onClick={onBackToQuestions}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all duration-150 cursor-pointer active:scale-[0.98]"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Questions</span>
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => setShowRetryConfirm(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold shadow-sm transition-colors cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Retry Question</span>
+            </button>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              {!isLastQuestion ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={onFinishInterview}
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    Finish Early
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onNextQuestion}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all cursor-pointer"
+                  >
+                    <span>Next Question</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onFinishInterview}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all cursor-pointer"
+                >
+                  <Check className="w-5 h-5" />
+                  <span>Finish Interview</span>
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Retry Confirmation Modal */}

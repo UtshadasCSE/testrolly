@@ -26,17 +26,37 @@ import {
   getSupportedVideoMimeType,
   stopMediaStream,
 } from '../utils/recording';
-import { AlertCircle, RefreshCw, Square, Loader2 } from 'lucide-react';
+import { AlertCircle, RefreshCw, Square, Loader2, ArrowLeft } from 'lucide-react';
 
 const testData = interviewDataRaw as InterviewData;
 
 interface TestInterviewProps {
+  mode?: 'full' | 'practice';
+  practiceQuestionId?: number;
   onNavigatePractice?: () => void;
+  onNavigateHome?: () => void;
 }
 
-export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice }) => {
+export const TestInterview: React.FC<TestInterviewProps> = ({
+  mode = 'full',
+  practiceQuestionId,
+  onNavigatePractice,
+  onNavigateHome,
+}) => {
+  const isPracticeMode = mode === 'practice';
+  const allQuestions: IInterviewQuestion[] = testData.questions || [];
+  const practiceQuestion =
+    isPracticeMode && practiceQuestionId
+      ? allQuestions.find((q) => q.id === practiceQuestionId)
+      : undefined;
+
+  const isInvalidPracticeQuestion = isPracticeMode && !practiceQuestion;
+
+  const questions: IInterviewQuestion[] =
+    isPracticeMode && practiceQuestion ? [practiceQuestion] : allQuestions;
+
   // Navigation & Interview State
-  const [phase, setPhase] = useState<InterviewPhase>('intro');
+  const [phase, setPhase] = useState<InterviewPhase>(isPracticeMode ? 'device-check' : 'intro');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [completedQuestions, setCompletedQuestions] = useState<CompletedQuestion[]>([]);
 
@@ -57,7 +77,6 @@ export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
 
-  const questions = testData.questions || [];
   const currentQuestion: IInterviewQuestion | undefined = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex >= questions.length - 1;
 
@@ -346,7 +365,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice
     }
   };
 
-  // Handler: Retry Question after feedback
+  // Handler: Retry Question / Practice Again after feedback
   const handleRetryQuestion = () => {
     if (currentRecordingUrl) {
       try {
@@ -389,19 +408,58 @@ export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice
     setPhase('intro');
   };
 
+  // Safe fallback UI when invalid question is requested in Practice Mode
+  if (isInvalidPracticeQuestion) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+        <Navbar
+          phase="intro"
+          isPracticeMode={true}
+          onGetStarted={() => onNavigatePractice?.()}
+          onLogoClick={onNavigateHome}
+        />
+        <main className="flex-1 max-w-xl w-full mx-auto px-4 py-16 flex flex-col items-center justify-center text-center">
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4 w-full">
+            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 font-heading">Question Not Found</h2>
+            <p className="text-sm text-slate-600">
+              The requested practice question (ID: {practiceQuestionId ?? 'invalid'}) does not exist in our interview database.
+            </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={onNavigatePractice}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition-all duration-150 cursor-pointer active:scale-[0.98]"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Practice Questions</span>
+              </button>
+            </div>
+          </div>
+        </main>
+        <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500">
+          <p>Testrolly — AI University Admission, Credibility & CAS Practice</p>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
       {/* Floating Rounded Navbar */}
       <Navbar
         phase={phase}
+        isPracticeMode={isPracticeMode}
         onGetStarted={() => setPhase('device-check')}
-        onLogoClick={handleRestartSession}
+        onLogoClick={isPracticeMode ? (onNavigateHome || handleRestartSession) : handleRestartSession}
       />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
         {/* Phase 1: Intro */}
-        {phase === 'intro' && (
+        {phase === 'intro' && !isPracticeMode && (
           <InterviewIntro
             onStart={() => setPhase('device-check')}
             onPracticeMore={onNavigatePractice}
@@ -413,7 +471,19 @@ export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice
         {phase === 'device-check' && (
           <DeviceCheck
             onReady={handleDeviceCheckReady}
-            onBack={() => setPhase('intro')}
+            onBack={() => {
+              if (isPracticeMode) {
+                if (onNavigatePractice) {
+                  onNavigatePractice();
+                } else {
+                  setPhase('intro');
+                }
+              } else {
+                setPhase('intro');
+              }
+            }}
+            backLabel={isPracticeMode ? '← Back to Practice Questions' : '← Back to Overview'}
+            actionLabel={isPracticeMode ? 'Start Practice' : 'Start Interview'}
           />
         )}
 
@@ -425,6 +495,8 @@ export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice
               currentIndex={currentQuestionIndex}
               totalQuestions={questions.length}
               difficulty={currentQuestion.difficulty}
+              isPracticeMode={isPracticeMode}
+              questionId={currentQuestion.id}
             />
 
             {/* 2. Question Prompt Area */}
@@ -542,9 +614,11 @@ export const TestInterview: React.FC<TestInterviewProps> = ({ onNavigatePractice
           <QuestionFeedback
             feedback={currentFeedback}
             isLastQuestion={isLastQuestion}
+            isPracticeMode={isPracticeMode}
             onNextQuestion={handleNextQuestion}
             onFinishInterview={handleFinishInterview}
             onRetryQuestion={handleRetryQuestion}
+            onBackToQuestions={onNavigatePractice}
           />
         )}
 

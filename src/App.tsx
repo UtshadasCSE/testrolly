@@ -3,16 +3,16 @@ import { TestInterview } from './pages/TestInterview';
 import { Practice } from './pages/Practice';
 
 export function App() {
-  const [currentPath, setCurrentPath] = useState<string>(() => {
+  const [currentUrl, setCurrentUrl] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return window.location.pathname;
+      return window.location.pathname + window.location.search;
     }
     return '/';
   });
 
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentPath(window.location.pathname);
+      setCurrentUrl(window.location.pathname + window.location.search);
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -22,18 +22,52 @@ export function App() {
   }, []);
 
   const navigate = useCallback((path: string) => {
-    if (window.location.pathname !== path) {
+    if (window.location.pathname + window.location.search !== path) {
       window.history.pushState({}, '', path);
-      setCurrentPath(path);
+      setCurrentUrl(path);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, []);
 
-  if (currentPath === '/practice') {
-    return <Practice onNavigateHome={() => navigate('/')} />;
+  // Parse path and query parameters
+  const [pathname, search] = currentUrl.split('?');
+  const searchParams = new URLSearchParams(search || '');
+  const modeParam = searchParams.get('mode');
+  const questionParam = searchParams.get('question');
+
+  const isPracticeInterview =
+    modeParam === 'practice' ||
+    (pathname.startsWith('/practice/') && pathname !== '/practice');
+
+  let practiceQuestionId: number | undefined;
+  if (questionParam) {
+    practiceQuestionId = parseInt(questionParam, 10);
+  } else if (pathname.startsWith('/practice/')) {
+    const idStr = pathname.replace('/practice/', '');
+    practiceQuestionId = parseInt(idStr, 10);
   }
 
-  return <TestInterview onNavigatePractice={() => navigate('/practice')} />;
+  if (pathname === '/practice' && !isPracticeInterview) {
+    return (
+      <Practice
+        onNavigateHome={() => navigate('/')}
+        onPracticeQuestion={(questionId) =>
+          navigate(`/test-interview?mode=practice&question=${questionId}`)
+        }
+      />
+    );
+  }
+
+  return (
+    <TestInterview
+      key={isPracticeInterview ? `practice-${practiceQuestionId}` : 'full-interview'}
+      mode={isPracticeInterview ? 'practice' : 'full'}
+      practiceQuestionId={practiceQuestionId}
+      onNavigatePractice={() => navigate('/practice')}
+      onNavigateHome={() => navigate('/')}
+    />
+  );
 }
 
 export default App;
+

@@ -5,11 +5,12 @@ import { InterviewPhase } from '../../types/interview';
 
 interface NavbarProps {
   phase: InterviewPhase;
+  isPracticeMode?: boolean;
   onGetStarted: () => void;
   onLogoClick?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ phase, onGetStarted, onLogoClick }) => {
+export const Navbar: React.FC<NavbarProps> = ({ phase, isPracticeMode = false, onGetStarted, onLogoClick }) => {
   return (
     <header className="sticky top-3 sm:top-4 z-50 w-[calc(100%-24px)] sm:w-[calc(100%-48px)] max-w-6xl mx-auto">
       <div className="h-16 px-4 sm:px-6 rounded-2xl bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between transition-all duration-200">
@@ -23,7 +24,11 @@ export const Navbar: React.FC<NavbarProps> = ({ phase, onGetStarted, onLogoClick
 
         {/* Right Side: Only Get Started Button or Active Mode */}
         <div>
-          {phase === 'intro' ? (
+          {isPracticeMode ? (
+            <div className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-sans">
+              Single Question Practice
+            </div>
+          ) : phase === 'intro' ? (
             <button
               type="button"
               onClick={onGetStarted}
