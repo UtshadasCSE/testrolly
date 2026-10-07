@@ -24,6 +24,7 @@ import {
   extractAudioFromBlob,
   formatDuration,
   getSupportedVideoMimeType,
+  MAX_RECORDING_DURATION,
   stopMediaStream,
 } from '../utils/recording';
 import { AlertCircle, RefreshCw, Square, Loader2, ArrowLeft } from 'lucide-react';
@@ -65,7 +66,11 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
   const recordingTimerRef = useRef<number | null>(null);
+  const autoStopTimeoutRef = useRef<number | null>(null);
   const recordingStartTimeRef = useRef<number>(0);
+  const stopRequestedRef = useRef<boolean>(false);
+  const autoAnalyzeRef = useRef<boolean>(false);
+  const analysisInProgressRef = useRef<boolean>(false);
 
   // Current Question Recording & Feedback State
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -86,13 +91,22 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
   const currentRecordingUrlRef = useRef<string | null>(null);
   currentRecordingUrlRef.current = currentRecordingUrl;
 
+  const clearRecordingTimers = () => {
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
+    }
+    if (autoStopTimeoutRef.current) {
+      clearTimeout(autoStopTimeoutRef.current);
+      autoStopTimeoutRef.current = null;
+    }
+  };
+
   // Cleanup ONLY on component unmount
   useEffect(() => {
     return () => {
       stopMediaStream(mediaStreamRef.current);
-      if (recordingTimerRef.current) {
-        clearInterval(recordingTimerRef.current);
-      }
+      clearRecordingTimers();
       if (currentRecordingUrlRef.current) {
         try {
           URL.revokeObjectURL(currentRecordingUrlRef.current);
@@ -123,6 +137,9 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
       return;
     }
 
+    clearRecordingTimers();
+    stopRequestedRef.current = false;
+    autoAnalyzeRef.current = false;
     recordedChunksRef.current = [];
     setRecordingDuration(0);
     setAnalysisError(null);
@@ -151,15 +168,17 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         const totalChunks = recordedChunksRef.current.length;
         const blob = new Blob(recordedChunksRef.current, { type: finalMime });
 
-        const calculatedDuration = recordingStartTimeRef.current > 0
+        const rawDuration = recordingStartTimeRef.current > 0
           ? Math.max(1, Math.round((Date.now() - recordingStartTimeRef.current) / 1000))
           : recordingDuration;
+        const calculatedDuration = Math.min(MAX_RECORDING_DURATION, rawDuration);
 
         console.log('[Testrolly Recording] MediaRecorder onstop event completed:', {
           chunks: totalChunks,
           blobSize: blob.size,
           blobType: blob.type,
           durationSeconds: calculatedDuration,
+          autoAnalyze: autoAnalyzeRef.current,
         });
 
         if (blob.size === 0) {
@@ -171,9 +190,9 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         }
 
         // Clean up previous URL if replacing
-        if (currentRecordingUrl) {
+        if (currentRecordingUrlRef.current) {
           try {
-            URL.revokeObjectURL(currentRecordingUrl);
+            URL.revokeObjectURL(currentRecordingUrlRef.current);
           } catch {
             // ignore
           }
@@ -184,11 +203,17 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         setCurrentRecordingUrl(url);
         setRecordingDuration(calculatedDuration);
         setIsFinalizing(false);
-        setPhase('review');
+
+        if (autoAnalyzeRef.current) {
+          handleAnalyzeAnswer(blob, calculatedDuration);
+        } else {
+          setPhase('review');
+        }
       };
 
       recorder.onerror = (event: any) => {
         console.error('[Testrolly Recording] MediaRecorder error event:', event?.error || event);
+        clearRecordingTimers();
         setIsFinalizing(false);
         setIsRecording(false);
       };
@@ -198,48 +223,74 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
       setPhase('recording');
       recordingStartTimeRef.current = Date.now();
 
-      if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
       recordingTimerRef.current = window.setInterval(() => {
         const elapsedSecs = Math.floor((Date.now() - recordingStartTimeRef.current) / 1000);
-        setRecordingDuration(elapsedSecs);
-      }, 500);
+        const clampedSecs = Math.min(MAX_RECORDING_DURATION, elapsedSecs);
+        setRecordingDuration(clampedSecs);
+
+        if (elapsedSecs >= MAX_RECORDING_DURATION) {
+          stopRecording(true);
+        }
+      }, 250);
+
+      autoStopTimeoutRef.current = window.setTimeout(() => {
+        stopRecording(true);
+      }, MAX_RECORDING_DURATION * 1000);
     } catch (err: any) {
       console.error('[Testrolly Recording] Error starting MediaRecorder:', err);
+      clearRecordingTimers();
       setAnalysisError('Failed to start recording. Please check camera and microphone permissions.');
       setIsRecording(false);
       setIsFinalizing(false);
     }
   };
 
-  // Stop MediaRecorder
-  const handleStopRecording = () => {
-    if (isFinalizing || !isRecording) return;
-    setIsFinalizing(true);
-    setIsRecording(false);
+  // Stop MediaRecorder (manual or auto)
+  const stopRecording = (isAuto: boolean = false) => {
+    if (stopRequestedRef.current) return;
+    stopRequestedRef.current = true;
+    autoAnalyzeRef.current = isAuto;
 
-    if (recordingTimerRef.current) {
-      clearInterval(recordingTimerRef.current);
-      recordingTimerRef.current = null;
+    clearRecordingTimers();
+    setIsRecording(false);
+    setIsFinalizing(true);
+
+    if (isAuto) {
+      setRecordingDuration(MAX_RECORDING_DURATION);
+      setPhase('processing');
     }
 
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+    const recorder = mediaRecorderRef.current;
+    if (recorder && recorder.state !== 'inactive') {
       try {
-        console.log('[Testrolly Recording] Requesting data flush and stopping MediaRecorder...');
-        if (mediaRecorderRef.current.state === 'recording') {
-          mediaRecorderRef.current.requestData();
+        console.log(`[Testrolly Recording] Requesting data flush and stopping MediaRecorder (isAuto: ${isAuto})...`);
+        if (recorder.state === 'recording') {
+          recorder.requestData();
         }
-        mediaRecorderRef.current.stop();
+        recorder.stop();
       } catch (err) {
         console.error('[Testrolly Recording] Error calling stop on MediaRecorder:', err);
         setIsFinalizing(false);
+        if (isAuto) {
+          setPhase('review');
+        }
       }
     } else {
       setIsFinalizing(false);
+      if (isAuto) {
+        setPhase('review');
+      }
     }
+  };
+
+  // Manual stop trigger from button
+  const handleStopRecording = () => {
+    stopRecording(false);
   };
 
   // Handler: Candidate chooses "Record Again" from preview
   const handleRecordAgain = () => {
+    clearRecordingTimers();
     if (currentRecordingUrl) {
       try {
         URL.revokeObjectURL(currentRecordingUrl);
@@ -254,19 +305,24 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
     setPhase('preparing');
   };
 
-  // Handler: Candidate clicks "Analyze My Answer"
-  const handleAnalyzeAnswer = async () => {
-    if (!currentRecordingBlob || !currentQuestion) return;
+  // Handler: Candidate clicks "Analyze My Answer" or auto-analyze triggered
+  const handleAnalyzeAnswer = async (blobToAnalyze?: Blob | unknown, durationToAnalyze?: number) => {
+    const blob = blobToAnalyze instanceof Blob ? blobToAnalyze : currentRecordingBlob;
+    const duration = typeof durationToAnalyze === 'number' ? durationToAnalyze : recordingDuration;
+
+    if (!blob || !currentQuestion) return;
+    if (analysisInProgressRef.current) return;
+    analysisInProgressRef.current = true;
 
     setIsAnalyzing(true);
     setAnalysisError(null);
     setPhase('processing');
 
     try {
-      console.log(`[Testrolly Analysis] Video size: ${(currentRecordingBlob.size / 1024 / 1024).toFixed(2)} MB, MIME: ${currentRecordingBlob.type || 'video/webm'}`);
+      console.log(`[Testrolly Analysis] Video size: ${(blob.size / 1024 / 1024).toFixed(2)} MB, MIME: ${blob.type || 'video/webm'}`);
       
       // Extract pristine 16kHz mono WAV audio for Cloudflare Whisper STT
-      const audioBlob = await extractAudioFromBlob(currentRecordingBlob);
+      const audioBlob = await extractAudioFromBlob(blob);
       console.log(`[Testrolly Analysis] Extracted audio size: ${(audioBlob.size / 1024).toFixed(1)} KB, MIME: ${audioBlob.type}`);
 
       const base64Audio = await blobToBase64(audioBlob);
@@ -278,7 +334,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         },
         body: JSON.stringify({
           questionId: currentQuestion.id,
-          durationSeconds: recordingDuration,
+          durationSeconds: duration,
           audioBase64: base64Audio,
           audioMimeType: audioBlob.type || 'audio/wav',
         }),
@@ -317,6 +373,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
       setPhase('review'); // Keep recording safe in review screen
     } finally {
       setIsAnalyzing(false);
+      analysisInProgressRef.current = false;
     }
   };
 
@@ -343,6 +400,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
 
   // Handler: Next Question
   const handleNextQuestion = () => {
+    clearRecordingTimers();
     saveCurrentQuestionResult();
 
     if (currentQuestionIndex + 1 < questions.length) {
@@ -367,6 +425,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
 
   // Handler: Retry Question / Practice Again after feedback
   const handleRetryQuestion = () => {
+    clearRecordingTimers();
     if (currentRecordingUrl) {
       try {
         URL.revokeObjectURL(currentRecordingUrl);
@@ -384,6 +443,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
 
   // Handler: Finish Interview
   const handleFinishInterview = () => {
+    clearRecordingTimers();
     saveCurrentQuestionResult();
     stopMediaStream(mediaStream);
     setMediaStream(null);
@@ -392,6 +452,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
 
   // Handler: Restart entire session
   const handleRestartSession = () => {
+    clearRecordingTimers();
     if (currentRecordingUrl) {
       try {
         URL.revokeObjectURL(currentRecordingUrl);

@@ -2,6 +2,8 @@
  * Utility functions for audio and video media recording and processing
  */
 
+export const MAX_RECORDING_DURATION = 60;
+
 export function getSupportedVideoMimeType(): string {
   if (typeof window === 'undefined' || !window.MediaRecorder) {
     return 'video/webm';
