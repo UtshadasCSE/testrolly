@@ -127,7 +127,7 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
                   <h3 className="text-[10px] font-semibold text-slate-900 leading-snug font-heading">
                     {q.question}
                   </h3>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border shrink-0 ${getDifficultyBadge(q.difficulty)}`}>
+                  <span className={`inline-flex items-center px-[5px] py-[2px] rounded-full text-[6px] font-medium border shrink-0 ${getDifficultyBadge(q.difficulty)}`}>
                     {q.difficulty}
                   </span>
                 </div>
