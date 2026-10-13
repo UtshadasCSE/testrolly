@@ -41,12 +41,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onStart, onPracticeMor
           initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={getTransition(0.08)}
-          className="text-4xl sm:text-5xl md:text-6xl text-slate-900 font-semibold tracking-[-0.04em] leading-[1.05]"
+          className="text-4xl sm:text-5xl md:text-[64px] font-extrabold text-[#0F172A] tracking-[-0.04em] leading-[1.1] text-center"
         >
-          Practice Smarter.{' '}
-          <span className="block sm:inline text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 font-semibold">
-            Interview Better.
-          </span>
+          Practice Smarter.
+          <br />
+          <span className="text-[#079669]">Interview Better.</span>
         </motion.h1>
 
         {/* Subtitle / Description */}
