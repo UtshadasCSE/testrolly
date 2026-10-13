@@ -291,8 +291,19 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
       })()}
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 mt-12">
-        <p>Testrolly — AI University Admission, Credibility & CAS Practice</p>
+      <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 mt-12 px-4">
+        <p className="leading-relaxed">
+          <span>Testrolly — AI University Admission, Credibility & CAS Practice</span>
+          <span className="text-slate-300 mx-2" aria-hidden="true">|</span>
+          <a
+            href="https://utshastack.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-slate-600 hover:text-[#079669] transition-colors duration-200 focus:outline-none focus-visible:underline"
+          >
+            Utsha Das
+          </a>
+        </p>
       </footer>
     </div>
   );
