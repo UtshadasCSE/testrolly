@@ -144,7 +144,7 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
                 <button
                   type="button"
                   onClick={() => onPracticeQuestion(q.id)}
-                  className="w-full sm:flex-1 h-8 inline-flex items-center justify-center gap-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-semibold shadow-sm hover:shadow transition-all duration-150 cursor-pointer active:scale-[0.98]"
+                  className="w-full sm:flex-1 h-8 inline-flex items-center justify-center gap-1.5 px-3 rounded-lg bg-[#daf6f1] hover:bg-emerald-700 text-white text-[10px] font-semibold shadow-sm hover:shadow transition-all duration-150 cursor-pointer active:scale-[0.98]"
                 >
                   <Play className="w-3 h-3 fill-white" />
                   <span>Practice Now</span>
