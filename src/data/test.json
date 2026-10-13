@@ -157,6 +157,258 @@
       ],
       "expectedAnswer": "Yes, I am fully aware of my course and its modules. I will study the MSc Advanced Data Science at Bangor University. The course is worth 180 credits and includes six compulsory modules and a 60-credit individual project.\n\nThe six compulsory modules are:\n\nInformation Visualisation, 20 credits\nHigh Performance Computing, 20 credits\nData Science, 20 credits\nNatural Language Processing, 20 credits\nMachine Learning, 20 credits\nAdvanced Research Methods, 20 credits\n\nIn addition, I will complete the MSc Individual Project, which is worth 60 credits.",
       "preparationTime": 10
+    },
+    {
+      "id": 14,
+      "difficulty": "Course Information",
+      "question": "How is your course assessed? What is the assessment method of the course?",
+      "questionVariations": [
+        "Could you please explain how your MSc Advanced Data Science course at Bangor University will be assessed?",
+        "What types of assessments will you need to complete during your master's programme, including coursework, examinations, and practical projects?",
+        "Can you describe the different assessment methods used in your course and explain how your MSc Individual Project contributes to your overall assessment?"
+      ],
+      "expectedAnswer": "My MSc Advanced Data Science course is assessed through different methods, depending on the module. These include coursework, practical assignments, reports, exams, presentations, and project work.\n\nI'll also complete a 60-credit MSc Individual Project, where I'll apply the knowledge and skills I've gained throughout the course.\n\nSo, the assessments focus on both theoretical knowledge and practical skills.",
+      "preparationTime": 10
+    },
+    {
+      "id": 15,
+      "difficulty": "Course Information",
+      "question": "How is your course structured?",
+      "questionVariations": [
+        "Could you please explain how your MSc Advanced Data Science course at Bangor University is structured across the three semesters?",
+        "Can you describe which modules you will study in each semester and how many credits are allocated to your taught modules and final project?",
+        "How is your master's programme organised, including the semester-wise modules, total credits, and MSc Individual Project?"
+      ],
+      "expectedAnswer": "My MSc Advanced Data Science course at Bangor University is a full-time programme worth 180 credits, divided into three semesters.\n\nIn the first semester, I'll study Information Visualisation, High Performance Computing, and Data Science.\n\nIn the second semester, I'll study Natural Language Processing, Machine Learning, and Advanced Research Methods.\n\nEach of these six modules is worth 20 credits.\n\nFinally, in the third semester, I'll complete my MSc Individual Project, which is worth 60 credits.\n\nOverall, the course combines theoretical knowledge with practical experience, helping me develop advanced skills in data science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 16,
+      "difficulty": "Course Information",
+      "question": "How is this course related to your previous education?",
+      "questionVariations": [
+        "Could you please explain how your MSc Advanced Data Science course at Bangor University relates to your previous Bachelor's degree in Computer Science and Engineering?",
+        "How does your academic background in Computer Science and Engineering prepare you for studying Advanced Data Science at the postgraduate level?",
+        "Can you describe the connection between your previous education, your professional experience as a Frontend Developer, and your decision to pursue an MSc in Advanced Data Science?"
+      ],
+      "expectedAnswer": "My MSc Advanced Data Science course is directly related to my Bachelor's degree in Computer Science and Engineering from Daffodil International University.\n\nDuring my bachelor's degree, I gained a strong foundation in programming, algorithms, computing, and problem-solving.\n\nThe MSc will help me build on this knowledge through modules like Data Science, Machine Learning, and Information Visualisation.\n\nAlso, my professional experience as a Frontend Developer at Searchaly has helped me develop my technical and problem-solving skills.\n\nSo, this course is a natural progression from my previous education and work experience, and it will help me achieve my career goal of becoming a Data Analyst and eventually a Data Scientist.",
+      "preparationTime": 10
+    },
+    {
+      "id": 17,
+      "difficulty": "Course Information",
+      "question": "Can you explain the course overview and some module content?",
+      "questionVariations": [
+        "Could you please provide an overview of your MSc Advanced Data Science course at Bangor University and explain what you will learn in its main modules?",
+        "Can you describe the key subjects covered in your master's programme, including Data Science, Machine Learning, Natural Language Processing, and High Performance Computing?",
+        "How is your MSc Advanced Data Science course organised, and could you explain the content of its compulsory modules and the purpose of your individual project?"
+      ],
+      "expectedAnswer": "My MSc Advanced Data Science course at Bangor University is worth 180 credits. It includes six taught modules, each worth 20 credits, and a 60-credit individual project.\n\nThe course focuses on developing advanced skills in data analysis, machine learning, programming, and research.\n\nSome of the key modules are:\n\nInformation Visualisation: This module focuses on how to present complex data in a clear and understandable way using charts, graphs, and other visualisation techniques.\n\nHigh Performance Computing: This module teaches how to process large amounts of data efficiently using parallel programming and technologies like CPUs and GPUs.\n\nData Science: This module covers important topics such as regression, classification, clustering, and time series analysis. It will help me analyse data, identify patterns, and make data-driven decisions.\n\nNatural Language Processing: This module focuses on how computers process and understand human language. It covers topics like text processing, language modelling, and information extraction using Python.\n\nMachine Learning: This module teaches how machines learn from data and make predictions. It covers regression, classification, neural networks, and deep learning.\n\nAdvanced Research Methods: This module focuses on research planning, data collection, statistical analysis, and research ethics. It will also help me prepare for my individual project.\n\nMSc Individual Project: Finally, I'll complete a 60-credit individual project, where I'll apply the knowledge and skills I've gained throughout the course to a practical or research-based data science problem.\n\nOverall, this course will help me develop both theoretical knowledge and practical skills, which are essential for my future career as a Data Analyst and eventually a Data Scientist.",
+      "preparationTime": 10
+    },
+    {
+      "id": 18,
+      "difficulty": "Course Information",
+      "question": "Which specific aspects of this course have attracted you? Which modules are you most looking forward to studying and why?",
+      "questionVariations": [
+        "What attracted you to the MSc Advanced Data Science course at Bangor University, and which modules are you particularly interested in studying?",
+        "Could you explain which modules you are most excited about in your chosen course and how they relate to your academic background and career goals?",
+        "Among the modules offered in your MSc Advanced Data Science programme, which three interest you the most, and why do you believe they will be useful for your future career?"
+      ],
+      "expectedAnswer": "The main things that attracted me to this course are its practical approach and how well it matches my future career goals.\n\nI'm particularly interested in three modules: Data Science, Machine Learning, and Information Visualisation.\n\nFirstly, Data Science interests me because I want to learn how to analyse different types of data and identify useful patterns.\n\nSecondly, Machine Learning is one of my favourite modules because I want to understand how computers learn from data and make predictions using techniques like regression, classification, and neural networks.\n\nFinally, Information Visualisation attracts me because I want to learn how to present complex data clearly using charts, graphs, and other visual techniques.\n\nOverall, these modules build on my Computer Science background and will help me develop the skills I need to become a Data Analyst and eventually a Data Scientist",
+      "preparationTime": 10
+    },
+    {
+      "id": 20,
+      "difficulty": "Course Information",
+      "question": "Did you consider studying any other courses? If yes, why this course over other courses?",
+      "questionVariations": [
+        "Did you explore any other postgraduate courses before deciding to study MSc Advanced Data Science at Bangor University?",
+        "Why did you choose MSc Advanced Data Science instead of pursuing a general Computer Science or another computing-related master's degree?",
+        "Were there any alternative courses you considered, and what made MSc Advanced Data Science the most suitable choice for your academic background and future career goals?"
+      ],
+      "expectedAnswer": "No, I didn't seriously consider any other courses because MSc Advanced Data Science closely matches my Computer Science background, professional experience, and future career goals.\n\nI already have a foundation in computing and programming, so I wanted to specialise in Data Science rather than study a general Computer Science course again.\n\nThis course includes modules like Data Science, Machine Learning, and Information Visualisation, which will help me develop the skills I need for my future career as a Data Analyst and eventually a Data Scientist.",
+      "preparationTime": 10
+    },
+    {
+      "id": 21,
+      "difficulty": "Course Information",
+      "question": "What knowledge and skills will you gain from this course?",
+      "questionVariations": [
+        "Could you explain what knowledge and practical skills you expect to develop during your MSc Advanced Data Science course at Bangor University?",
+        "What technical, analytical, and research skills will you gain from studying MSc Advanced Data Science, and how will they benefit your future career?",
+        "How will the modules in your MSc Advanced Data Science programme help you improve your Data Science, Machine Learning, programming, and problem-solving abilities?"
+      ],
+      "expectedAnswer": "Through this course, I'll develop advanced knowledge and practical skills in Data Science.\n\nFirstly, I'll learn how to analyse different types of data, identify useful patterns, and make data-driven decisions.\n\nSecondly, I'll develop Machine Learning skills, including regression, classification, clustering, and neural networks. This will help me understand how to build and evaluate machine learning models.\n\nI'll also learn how to present complex data clearly using charts, graphs, and other visualisation techniques.\n\nBesides that, I'll improve my programming, problem-solving, research, and analytical skills through practical assignments and my individual project.\n\nOverall, these skills will build on my Computer Science background and help me achieve my career goal of becoming a Data Analyst and eventually a Data Scientist.",
+      "preparationTime": 10
+    },
+    {
+      "id": 22,
+      "difficulty": "Future Plan",
+      "question": "What is your career plan? What is your post-study plan? What is your plan after completing this course?",
+      "questionVariations": [
+        "Could you please explain your career plans after completing your MSc Advanced Data Science at Bangor University?",
+        "What do you intend to do after finishing your master's degree in the UK, and how will this qualification help you achieve your professional goals in Bangladesh?",
+        "Where do you see yourself working after graduation, which companies would you like to join, and what are your long-term career ambitions?"
+      ],
+      "expectedAnswer": "After completing my MSc Advanced Data Science at Bangor University, my plan is to return to Bangladesh and start my career as a Data Analyst.\n\nI'd like to work for well-known companies such as Brain Station 23, bKash, or Grameenphone, where I can apply my data analysis and technical skills to real-world projects.\n\nI already have a background in Computer Science and professional experience as a Frontend Developer at Searchaly, which has helped me develop strong technical and problem-solving skills.\n\nThrough this MSc, I'll gain advanced knowledge in Data Science, Machine Learning, and Information Visualisation, which will help me move into a data-focused career.\n\nIn the long term, after gaining professional experience, my goal is to become a Senior Data Scientist and contribute to the growing technology sector in Bangladesh.",
+      "preparationTime": 10
+    },
+    {
+      "id": 23,
+      "difficulty": "Future Plan",
+      "question": "Why are you interested in this career?",
+      "questionVariations": [
+        "Could you please explain what motivated you to pursue a career in Data Science?",
+        "What inspired you to move from frontend development into Data Science, and why do you find this career path appealing?",
+        "How did your academic background and professional experience influence your decision to build a career in Data Science?"
+      ],
+      "expectedAnswer": "I became interested in Data Science through my Computer Science background and my professional experience as a Frontend Developer.\n\nWhile working on websites, I became curious about how data can be analysed to identify patterns and help businesses make better decisions.\n\nI realised that I wanted to expand my knowledge beyond frontend development and focus more on Data Science and Machine Learning.\n\nI believe this career will allow me to use my existing technical and problem-solving skills in a more analytical way.\n\nThat's why I chose Data Science as my future career path, and I hope to build my career in this field when I return to Bangladesh.",
+      "preparationTime": 10
+    },
+    {
+      "id": 24,
+      "difficulty": "Future Plan",
+      "question": "How does this course help you achieve your career plan? How is this course linked to your career goal? How does this course benefit you? What skills and knowledge will you gain by studying this course in the UK?",
+      "questionVariations": [
+        "Could you explain how studying MSc Advanced Data Science at Bangor University will help you achieve your future career goals in Bangladesh?",
+        "How is your chosen master's course connected to your ambition of becoming a Data Analyst and eventually a Senior Data Scientist?",
+        "What specific knowledge and practical skills will you gain from this course, and how will modules such as Data Science, Machine Learning, and Information Visualisation benefit your future career?"
+      ],
+      "expectedAnswer": "This course is directly related to my future career goals because, after completing my MSc Advanced Data Science at Bangor University, I plan to return to Bangladesh and start my career as a Data Analyst.\n\nI already have a background in Computer Science and professional experience as a Frontend Developer, but I want to develop more specialised skills in Data Science.\n\nThe three modules that are most relevant to my career goals are Data Science, Machine Learning, and Information Visualisation.\n\nFirstly, Data Science will help me learn how to analyse different types of data, identify useful patterns, and make data-driven decisions.\n\nSecondly, Machine Learning will help me understand how to build and evaluate machine learning models using techniques like regression, classification, and clustering.\n\nFinally, Information Visualisation will teach me how to present complex data clearly using charts, graphs, and other visual techniques.\n\nI'll also improve my programming, analytical, and problem-solving skills through practical assignments and my individual project.\n\nOverall, this course will help me develop the knowledge and practical skills I need to become a Data Analyst and eventually progress to a Senior Data Scientist role in Bangladesh.",
+      "preparationTime": 10
+    },
+    {
+      "id": 25,
+      "difficulty": "Future Plan",
+      "question": "If you want to work for some specific companies, have you applied for jobs at those companies?",
+      "questionVariations": [
+        "Have you already submitted any job applications to companies such as Brain Station 23, bKash, or Grameenphone in Bangladesh?",
+        "Since you have mentioned specific companies where you would like to work, have you contacted them or applied for any Data Analyst positions?",
+        "Why haven't you applied for jobs at your preferred companies yet, and when do you plan to start applying for Data Analyst positions?"
+      ],
+      "expectedAnswer": "No, I haven't applied yet because I want to complete my MSc Advanced Data Science first and develop the specialised skills needed for my future career.\n\nAfter completing my course, I plan to return to Bangladesh and apply for Data Analyst positions at well-known companies like Brain Station 23, bKash, or Grameenphone, depending on the job opportunities available at that time.",
+      "preparationTime": 10
+    },
+    {
+      "id": 26,
+      "difficulty": "Future Plan",
+      "question": "Where are those companies located? And what kind of products and services do they offer?",
+      "questionVariations": [
+        "Could you tell me where Brain Station 23, bKash, and Grameenphone are located and explain the main services they provide?",
+        "You mentioned three companies where you would like to work after graduation. Where are these companies based, and what type of businesses do they operate?",
+        "Can you describe the business activities, products, and services offered by Brain Station 23, bKash, and Grameenphone in Bangladesh?"
+      ],
+      "expectedAnswer": "All three companies are based in Dhaka, Bangladesh.\n\nFirstly, Brain Station 23 is an IT company that provides software development, web and mobile application development, and other technology services.\n\nSecondly, bKash is a mobile financial service provider that offers services like money transfers, mobile payments, bill payments, and mobile recharges.\n\nFinally, Grameenphone is a telecommunications company that provides mobile network services, internet packages, and other digital services.\n\nThese are some of the companies I'd like to work for after completing my MSc and returning to Bangladesh.",
+      "preparationTime": 10
+    },
+    {
+      "id": 27,
+      "difficulty": "Future Plan",
+      "question": "Where have you got this salary information/figure from? How do you know this information?",
+      "questionVariations": [
+        "Could you explain which sources you used to research the expected salaries for Data Analyst and Data Scientist positions in Bangladesh?",
+        "How did you find out about the salary expectations for your intended career, and have you verified this information with anyone working in the industry?",
+        "What research have you conducted to understand the salaries, job responsibilities, and required skills for Data Science-related positions in Bangladesh?"
+      ],
+      "expectedAnswer": "I gathered salary information from several sources, including online job portals, LinkedIn, Google searches, and Reddit discussions.\n\nI also spoke with some of my university seniors who are currently working in technology-related companies in Bangladesh.\n\nThrough these sources, I researched Data Analyst and Data Scientist positions, including their job responsibilities, required skills, and expected salaries.\n\nBy comparing the information available online with the experiences of industry professionals, I developed a general understanding of salary expectations for these positions.\n\nHowever, I understand that salaries can vary depending on the company, technical skills, and professional experience.",
+      "preparationTime": 10
+    },
+    {
+      "id": 28,
+      "difficulty": "Future Plan",
+      "question": "What will be your job responsibilities as a Data Analyst?",
+      "questionVariations": [
+        "Could you describe the main duties and responsibilities you would expect to perform while working as a Data Analyst in Bangladesh?",
+        "What tasks does a Data Analyst typically perform, and which technical tools would you use to analyse and present business data?",
+        "How would you collect, clean, analyse, and visualise data as a Data Analyst, and how would your findings help an organisation make better business decisions?"
+      ],
+      "expectedAnswer": "As a Data Analyst, my main responsibilities will include collecting, preparing, cleaning, and analysing datasets to identify meaningful patterns and trends.\n\nFirst, I will collect data from different sources and ensure that the information is accurate, complete, and properly organised.\n\nAfter that, I will clean and analyse the datasets using tools such as SQL, Python, and Excel.\n\nI will also create charts, graphs, and dashboards to present complex information in a clear and understandable way.\n\nAnother important responsibility will be identifying business trends, analysing customer behaviour, and preparing reports for management.\n\nBased on my findings, I will provide data-driven recommendations to help organisations improve their performance and make better business decisions.\n\nOverall, my role will be to transform raw data into meaningful insights that support business growth.",
+      "preparationTime": 10
+    },
+    {
+      "id": 29,
+      "difficulty": "Future Plan",
+      "question": "What are the job requirements?",
+      "questionVariations": [
+        "Could you explain the main qualifications, technical skills, and professional abilities required to become a Data Analyst in Bangladesh?",
+        "What educational background and technical knowledge would you need to qualify for a Data Analyst position at companies such as Brain Station 23, bKash, or Grameenphone?",
+        "What are the essential skills and qualifications employers typically look for when recruiting Data Analysts, particularly in programming, data analysis, and communication?"
+      ],
+      "expectedAnswer": "The main requirements for a Data Analyst position would include:\n\n- A degree in Computer Science, Data Science, Statistics or a related field.\n- Good knowledge of data analysis and statistical methods.\n- Skills in SQL, Excel and data analysis tools.\n- Basic knowledge of programming, especially Python.\n- Ability to create reports and data visualisations.\n- Strong analytical, problem-solving and communication skills.",
+      "preparationTime": 10
+    },
+    {
+      "id": 30,
+      "difficulty": "Academic and Professional",
+      "question": "When did you finish your last course?",
+      "questionVariations": [
+        "Could you please tell me when you completed your previous academic qualification and which university you graduated from?",
+        "In which year did you complete your Bachelor's degree, and what subject did you study?",
+        "Can you confirm the name of your previous degree, the university you attended, and your year of graduation?"
+      ],
+      "expectedAnswer": "I completed my Bachelor's degree in Computer Science and Engineering from Daffodil International University in 2024.",
+      "preparationTime": 10
+    },
+    {
+      "id": 31,
+      "difficulty": "Academic and Professional",
+      "question": "What have you been doing since you finished your last course?",
+      "questionVariations": [
+        "Could you explain what you have been doing since graduating from Daffodil International University in 2024?",
+        "Have you been working or studying since completing your Bachelor's degree, and could you describe your professional responsibilities?",
+        "Can you tell me about your employment history after graduation, including when you started working at Searchaly and what your main duties were?"
+      ],
+      "expectedAnswer": "After completing my Bachelor's degree in 2024, I started working as a Frontend Developer at Searchaly on the 1st of August 2024, and I'm still working there.\n\nMy main responsibilities include developing responsive websites, fixing technical issues, testing website performance, and working with designers and developers to develop new features.\n\nThis experience has helped me improve my technical, programming, and problem-solving skills.",
+      "preparationTime": 10
+    },
+    {
+      "id": 32,
+      "difficulty": "Academic and Professional",
+      "question": "Have you taken any short courses or diplomas? If so, where did you study, how much did they cost, and what did you learn?",
+      "questionVariations": [
+        "Have you completed any additional professional training, certification programmes, or short courses since finishing your Bachelor's degree?",
+        "Apart from your university degree, have you pursued any diplomas or short courses to improve your technical knowledge and professional skills?",
+        "Since graduating in 2024, have you enrolled in any additional educational programmes, or have you mainly focused on gaining professional work experience?"
+      ],
+      "expectedAnswer": "No, I haven't taken any additional short courses or diplomas since completing my Bachelor's degree. I've mainly focused on gaining practical experience through my work as a Frontend Developer.",
+      "preparationTime": 10
+    },
+    {
+      "id": 38,
+      "difficulty": "University Related",
+      "question": "Why did you choose to study at this institute? Why did you choose to study at this institute? What motivated you to study at this institute?",
+      "questionVariations": [
+        "Could you explain why you decided to study at Bangor University instead of choosing another university in the UK?",
+        "What were the main factors that influenced your decision to choose Bangor University for your MSc Advanced Data Science?",
+        "How do Bangor University's academic reputation, course structure, and facilities support your educational background and future career goals?"
+      ],
+      "expectedAnswer": "I chose Bangor University because its MSc Advanced Data Science programme closely aligns with my academic background, professional experience and future career goals.\n\nFirstly, I completed my bachelor's degree in Computer Science and Engineering at Daffodil International University, where I developed a strong foundation in programming, database management and problem-solving.\nAfter graduating, I worked as a Frontend Developer at Searchaly. During my professional experience, I became interested in understanding how businesses collect, process and analyse data to make better decisions.\n\nSecondly, I was particularly attracted by Bangor University's course structure. The modules that interest me most are Data Science, Machine Learning and Information Visualisation.\n\nThese modules will help me develop important skills in analysing data, identifying patterns, applying machine learning techniques and presenting analytical findings clearly.\n\nAnother important factor was Bangor University's academic reputation. According to the Complete University Guide 2027 figures in my research notes, Bangor is ranked 49th out of 130 UK universities, improving from 55th the previous year.\n\nI was also attracted by the university's facilities, including computer laboratories, networking laboratories, specialist research facilities and library resources.\n\nFinally, my long-term goal is to return to Bangladesh and build my career as a Data Analyst before progressing into Data Science.\n\nOverall, I believe Bangor University is the right choice for me because its course structure, academic environment and facilities closely match my career ambitions.",
+      "preparationTime": 10
+    },
+    {
+      "id": 39,
+      "difficulty": "University Related",
+      "question": "What facilities does this institute offer? What facilities attract you to study at this University?",
+      "questionVariations": [
+        "Could you describe the main academic and technical facilities available at Bangor University that will support your MSc Advanced Data Science studies?",
+        "Which facilities at Bangor University attracted you the most, particularly those related to Computer Science, programming, and research?",
+        "What research have you done about Bangor University's computer laboratories, library resources, and online learning facilities, and how will they benefit your studies?"
+      ],
+      "expectedAnswer": "Bangor University offers several modern facilities that are particularly useful for my MSc Advanced Data Science programme.\n\nFirstly, the School of Computer Science and Engineering has two open-use computer laboratories with 50 dual-boot Linux and Windows computers. These facilities will help me practise programming, analyse data and complete my practical assignments.\n\nSecondly, Bangor provides well-equipped computer and networking laboratories, along with specialist research facilities. These will support my technical learning, research activities and MSc project.\n\nAnother important facility is the university library. It provides access to academic books, e-books, online journals and research databases, which will be useful for my assignments and independent study.\n\nAdditionally, Bangor uses Blackboard, an online learning platform where students can access lecture recordings, course materials, assessments and feedback.\n\nThe university also provides study spaces, Wi-Fi facilities and computer rooms, some of which are accessible 24 hours a day.\n\nOverall, I believe these facilities will provide a supportive academic environment and help me develop the practical and research skills required for my future career in Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 40,
+      "difficulty": "University Related",
+      "question": "Did you consider studying at any other institutes? If so, which one?",
+      "questionVariations": [
+        "Which other UK universities did you consider before choosing Bangor University, and why did you decide not to study at those institutions?",
+        "Could you compare Bangor University with the University of Greenwich and the University of Wolverhampton in terms of course modules, tuition fees, and university rankings?",
+        "What research did you conduct when comparing different UK universities, and what made Bangor University your preferred choice for postgraduate studies?"
+      ],
+      "expectedAnswer": "Yes, before making my final decision, I considered the University of Greenwich and the University of Wolverhampton, both for their MSc Data Science programmes.\nFirstly, I compared their course structures with my academic background, previous professional experience and future career goals.\n\nThe University of Greenwich offers modules such as Machine Learning, Programming Fundamentals for Data Science and Ethics in Data Science. Similarly, the University of Wolverhampton offers relevant modules, including Applied Database Systems, Applied Statistics and digital citizenship for Computing.\n\nAlthough both universities offer good Data Science programmes, I felt that Bangor University's MSc Advanced Data Science was more closely aligned with my career plans.\n\nI am particularly interested in Bangor's Data Science, Machine Learning and Information Visualisation modules because I want to develop my skills in data analysis, machine learning and presenting analytical findings clearly.\n\nSecondly, I compared their university rankings. According to the Complete University Guide 2027 figures in my research notes, Bangor is ranked 49th, while Greenwich is ranked 102nd and Wolverhampton 101st.\n\nTuition fees were another important consideration. Greenwich's tuition fee is £19,450, while Wolverhampton's is £18,645. At Bangor University, my tuition fee is £14,500 after receiving a £6,000 scholarship.\n\nTherefore, Bangor is more affordable for me and offers a programme that closely matches my academic background and career ambitions.\n\nOverall, after comparing the course structures, university rankings and tuition fees, I decided that Bangor University was the most suitable choice for my postgraduate studies.",
+      "preparationTime": 10
     }
   ]
 }
