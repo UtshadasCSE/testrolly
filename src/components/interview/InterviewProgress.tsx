@@ -1,6 +1,7 @@
 import React from 'react';
 import { getDifficultyBadgeColor } from '../../utils/interview';
 import { DifficultyLevel } from '../../types/interview';
+import { StreakBadge } from './StreakBadge';
 
 interface InterviewProgressProps {
   currentIndex: number;
@@ -8,6 +9,7 @@ interface InterviewProgressProps {
   difficulty: DifficultyLevel;
   isPracticeMode?: boolean;
   questionId?: number;
+  streak?: number;
 }
 
 export const InterviewProgress: React.FC<InterviewProgressProps> = ({
@@ -16,6 +18,7 @@ export const InterviewProgress: React.FC<InterviewProgressProps> = ({
   difficulty,
   isPracticeMode = false,
   questionId,
+  streak,
 }) => {
   const currentNumber = questionId ?? (currentIndex + 1);
 
@@ -35,9 +38,14 @@ export const InterviewProgress: React.FC<InterviewProgressProps> = ({
               {difficulty}
             </span>
           </div>
-          <span className="text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full text-xs font-semibold">
-            Single Question Practice
-          </span>
+          <div className="flex items-center gap-2">
+            {typeof streak === 'number' && (
+              <StreakBadge streak={streak} className="hidden sm:inline-flex" />
+            )}
+            <span className="text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+              Single Question Practice
+            </span>
+          </div>
         </div>
 
         {/* Visual Progress Accent Bar */}
@@ -65,7 +73,12 @@ export const InterviewProgress: React.FC<InterviewProgressProps> = ({
             {difficulty}
           </span>
         </div>
-        <span className="text-slate-500 font-mono text-xs font-semibold">{progressPercent}% Completed</span>
+        <div className="flex items-center gap-2">
+          {typeof streak === 'number' && (
+            <StreakBadge streak={streak} className="hidden sm:inline-flex" />
+          )}
+          <span className="text-slate-500 font-mono text-xs font-semibold">{progressPercent}% Completed</span>
+        </div>
       </div>
 
       {/* Visual Progress Bar */}

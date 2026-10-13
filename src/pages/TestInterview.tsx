@@ -19,6 +19,7 @@ import { ProcessingState } from '../components/interview/ProcessingState';
 import { QuestionFeedback } from '../components/interview/QuestionFeedback';
 import { OverallFeedback } from '../components/interview/OverallFeedback';
 import { Navbar } from '../components/navbar/Navbar';
+import { StreakCelebrationOverlay } from '../components/interview/StreakCelebrationOverlay';
 import {
   blobToBase64,
   extractAudioFromBlob,
@@ -81,6 +82,19 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
   const [currentFeedback, setCurrentFeedback] = useState<InterviewFeedback | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+
+  // Consecutive Good-answer streak tracking & milestone celebration
+  const [streak, setStreak] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('testrolly_good_streak');
+      return saved ? parseInt(saved, 10) || 0 : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [celebrationMilestone, setCelebrationMilestone] = useState<number | null>(null);
+  const currentRecordingIdRef = useRef<number>(Date.now());
+  const lastEvaluatedRecordingIdRef = useRef<number | null>(null);
 
   const currentQuestion: IInterviewQuestion | undefined = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex >= questions.length - 1;
@@ -218,6 +232,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         setIsRecording(false);
       };
 
+      currentRecordingIdRef.current = Date.now();
       recorder.start(500);
       setIsRecording(true);
       setPhase('recording');
@@ -365,6 +380,38 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         throw new Error(userFriendlyMessage);
       }
 
+      // Track consecutive Good-answer streak
+      if (lastEvaluatedRecordingIdRef.current !== currentRecordingIdRef.current) {
+        lastEvaluatedRecordingIdRef.current = currentRecordingIdRef.current;
+
+        const isGood =
+          data.status === 'Good' ||
+          (typeof data.overallScore === 'number' && data.overallScore >= 70);
+
+        if (isGood) {
+          setStreak((prevStreak) => {
+            const newStreak = prevStreak + 1;
+            try {
+              localStorage.setItem('testrolly_good_streak', String(newStreak));
+            } catch {
+              // ignore
+            }
+
+            if (newStreak % 5 === 0) {
+              setCelebrationMilestone(newStreak);
+            }
+            return newStreak;
+          });
+        } else {
+          setStreak(0);
+          try {
+            localStorage.setItem('testrolly_good_streak', '0');
+          } catch {
+            // ignore
+          }
+        }
+      }
+
       setCurrentFeedback(data);
       setPhase('feedback');
     } catch (err: any) {
@@ -476,6 +523,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         <Navbar
           phase="intro"
           isPracticeMode={true}
+          streak={streak}
           onGetStarted={() => onNavigatePractice?.()}
           onLogoClick={onNavigateHome}
         />
@@ -513,6 +561,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
       <Navbar
         phase={phase}
         isPracticeMode={isPracticeMode}
+        streak={streak}
         onGetStarted={() => setPhase('device-check')}
         onLogoClick={() => {
           handleRestartSession();
@@ -561,6 +610,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
               difficulty={currentQuestion.difficulty}
               isPracticeMode={isPracticeMode}
               questionId={currentQuestion.id}
+              streak={streak}
             />
 
             {/* 2. Question Prompt Area */}
@@ -683,6 +733,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
             onFinishInterview={handleFinishInterview}
             onRetryQuestion={handleRetryQuestion}
             onBackToQuestions={onNavigatePractice}
+            streak={streak}
           />
         )}
 
@@ -699,6 +750,14 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
       <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 mt-8">
         <p>Testrolly — AI University Admission, Credibility & CAS Practice</p>
       </footer>
+
+      {/* 5-Question Good Streak Celebration Overlay */}
+      {celebrationMilestone !== null && (
+        <StreakCelebrationOverlay
+          milestone={celebrationMilestone}
+          onDismiss={() => setCelebrationMilestone(null)}
+        />
+      )}
     </div>
   );
 };

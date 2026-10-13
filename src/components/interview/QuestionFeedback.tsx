@@ -15,6 +15,7 @@ import {
 import { ArrowLeft } from 'lucide-react';
 import { InterviewFeedback } from '../../types/interview';
 import { getMemorizationColors, getScoreColors } from '../../utils/interview';
+import { StreakBadge } from './StreakBadge';
 
 interface QuestionFeedbackProps {
   feedback: InterviewFeedback;
@@ -24,6 +25,7 @@ interface QuestionFeedbackProps {
   onFinishInterview: () => void;
   onRetryQuestion: () => void;
   onBackToQuestions?: () => void;
+  streak?: number;
 }
 
 export const QuestionFeedback: React.FC<QuestionFeedbackProps> = ({
@@ -34,6 +36,7 @@ export const QuestionFeedback: React.FC<QuestionFeedbackProps> = ({
   onFinishInterview,
   onRetryQuestion,
   onBackToQuestions,
+  streak,
 }) => {
   const [showRetryConfirm, setShowRetryConfirm] = useState(false);
   const [showFullTranscript, setShowFullTranscript] = useState(true);
@@ -57,9 +60,14 @@ export const QuestionFeedback: React.FC<QuestionFeedbackProps> = ({
       <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span>AI Evaluation Complete</span>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <span>AI Evaluation Complete</span>
+              </div>
+              {typeof streak === 'number' && (
+                <StreakBadge streak={streak} />
+              )}
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 font-heading">
               Question Feedback
