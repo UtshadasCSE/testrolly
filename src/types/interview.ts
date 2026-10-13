@@ -1,9 +1,10 @@
-export type DifficultyLevel = 'Beginner' | 'Intermediate' | 'Advanced';
+export type DifficultyLevel = 'Beginner' | 'Intermediate' | 'Advanced' | string;
 
 export interface InterviewQuestion {
   id: number;
   difficulty: DifficultyLevel;
   question: string;
+  questionVariations?: string[];
   expectedAnswer: string;
   preparationTime: number;
 }

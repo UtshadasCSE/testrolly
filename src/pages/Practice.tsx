@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import interviewDataRaw from '../data/test.json';
 import { InterviewData, InterviewQuestion } from '../types/interview';
 import { Logo } from '../components/Logo';
-import { ArrowLeft, BookOpen, Play, X } from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronDown, Play, X } from 'lucide-react';
 
 const testData = interviewDataRaw as InterviewData;
 
@@ -13,7 +13,18 @@ interface PracticeProps {
 
 export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQuestion }) => {
   const [selectedQuestion, setSelectedQuestion] = useState<InterviewQuestion | null>(null);
+  const [isModalVariationsExpanded, setIsModalVariationsExpanded] = useState<boolean>(false);
   const questions: InterviewQuestion[] = testData.questions || [];
+
+  const handleOpenDetails = (q: InterviewQuestion) => {
+    setIsModalVariationsExpanded(false);
+    setSelectedQuestion(q);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedQuestion(null);
+    setIsModalVariationsExpanded(false);
+  };
 
   // Helper for semantic difficulty styling
   const getDifficultyBadge = (difficulty: string) => {
@@ -30,13 +41,18 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
     return 'bg-slate-100 text-slate-700 border-slate-200';
   };
 
+  // Reset modal variations whenever selected question changes or closes
+  useEffect(() => {
+    setIsModalVariationsExpanded(false);
+  }, [selectedQuestion?.id]);
+
   // Keyboard accessibility (Escape key) and scroll-lock when modal is open
   useEffect(() => {
     if (!selectedQuestion) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setSelectedQuestion(null);
+        handleCloseDetails();
       }
     };
 
@@ -120,7 +136,7 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
               <div className="flex flex-col sm:flex-row items-center gap-2 mt-auto pt-3.5 border-t border-slate-100">
                 <button
                   type="button"
-                  onClick={() => setSelectedQuestion(q)}
+                  onClick={() => handleOpenDetails(q)}
                   className="w-full sm:flex-1 h-8 inline-flex items-center justify-center gap-1.5 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 text-[10px] font-semibold transition-all duration-150 cursor-pointer active:scale-[0.98]"
                 >
                   <span>View Details</span>
@@ -140,75 +156,139 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
       </main>
 
       {/* View Details Modal */}
-      {selectedQuestion && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setSelectedQuestion(null);
-            }
-          }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-question-title"
-        >
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
-            {/* Modal Header */}
-            <div className="px-6 py-4 sm:px-7 sm:py-5 border-b border-slate-100 flex items-center justify-between gap-4 shrink-0 bg-slate-50/50">
-              <div className="flex items-center gap-3">
-                <h2 id="modal-question-title" className="text-xl font-bold text-slate-900 font-heading">
-                  Question {selectedQuestion.id}
-                </h2>
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getDifficultyBadge(selectedQuestion.difficulty)}`}>
-                  {selectedQuestion.difficulty}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedQuestion(null)}
-                aria-label="Close modal"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {selectedQuestion && (() => {
+        const hasModalVariations =
+          Array.isArray(selectedQuestion.questionVariations) &&
+          selectedQuestion.questionVariations.length > 0;
 
-            {/* Modal Body with internal scrolling */}
-            <div className="p-6 sm:p-7 overflow-y-auto space-y-6 text-left">
-              {/* Full Question */}
-              <div className="space-y-2">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  INTERVIEW QUESTION
-                </p>
-                <p className="text-lg sm:text-xl font-semibold text-slate-900 leading-snug">
-                  {selectedQuestion.question}
-                </p>
-              </div>
-
-              {/* Full Expected Answer with line breaks preserved */}
-              <div className="space-y-3 pt-5 border-t border-slate-100">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-                  <span>REFERENCE ANSWER</span>
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleCloseDetails();
+              }
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-question-title"
+          >
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-xl w-full max-h-[82vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+              {/* Modal Header */}
+              <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-b border-slate-100 flex items-center justify-between gap-3 shrink-0 bg-slate-50/50">
+                <div className="flex items-center gap-2.5">
+                  <h2 id="modal-question-title" className="text-base sm:text-lg font-bold text-slate-900 font-heading">
+                    Question {selectedQuestion.id}
+                  </h2>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border ${getDifficultyBadge(selectedQuestion.difficulty)}`}>
+                    {selectedQuestion.difficulty}
+                  </span>
                 </div>
-                <div className="p-4 sm:p-5 rounded-xl bg-slate-50/80 border border-slate-200/80 text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-line font-normal">
-                  {selectedQuestion.expectedAnswer}
+                <button
+                  type="button"
+                  onClick={handleCloseDetails}
+                  aria-label="Close modal"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Modal Body with internal scrolling */}
+              <div className="p-4 sm:p-5 overflow-y-auto space-y-4 text-left">
+                {/* Full Question */}
+                <div className="space-y-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    INTERVIEW QUESTION
+                  </p>
+                  <div className="text-[14px] font-semibold text-slate-900 leading-snug">
+                    <span>{selectedQuestion.question}</span>
+                    {hasModalVariations && (
+                      <button
+                        type="button"
+                        onClick={() => setIsModalVariationsExpanded((prev) => !prev)}
+                        aria-expanded={isModalVariationsExpanded}
+                        aria-controls="modal-question-variations"
+                        aria-label={isModalVariationsExpanded ? 'Hide question variations' : 'Show question variations'}
+                        title={isModalVariationsExpanded ? 'Hide question variations' : 'Show question variations'}
+                        className="inline-flex items-center justify-center w-5 h-5 ml-1.5 align-middle rounded text-[#079669] hover:bg-[#effdf8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#079669] cursor-pointer transition-colors"
+                      >
+                        <ChevronDown
+                          className={`w-3.5 h-3.5 text-[#079669] transition-transform duration-200 motion-reduce:transition-none ${
+                            isModalVariationsExpanded ? 'rotate-180' : ''
+                          }`}
+                          aria-hidden="true"
+                        />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Expandable Question Variations */}
+                  {hasModalVariations && (
+                    <div
+                      id="modal-question-variations"
+                      role="region"
+                      aria-label={`Alternative variations for question ${selectedQuestion.id}`}
+                      aria-hidden={!isModalVariationsExpanded}
+                      className={`grid transition-[grid-template-rows,opacity] duration-200 ease-in-out motion-reduce:transition-none ${
+                        isModalVariationsExpanded
+                          ? 'grid-rows-[1fr] opacity-100 pt-2'
+                          : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="p-2.5 rounded-lg bg-[#effdf8] border border-green-100 text-left">
+                          <div className="text-[10px] font-semibold text-[#079669] uppercase tracking-wider mb-2">
+                            QUESTION VARIATIONS ({selectedQuestion.questionVariations!.length})
+                          </div>
+                          <ol className="divide-y divide-green-100 list-none p-0 m-0">
+                            {selectedQuestion.questionVariations!.map((variation, vIdx) => (
+                              <li
+                                key={vIdx}
+                                className={`flex items-start gap-2 ${vIdx > 0 ? 'pt-2' : ''} ${
+                                  vIdx < selectedQuestion.questionVariations!.length - 1 ? 'pb-2' : ''
+                                }`}
+                              >
+                                <span className="text-[10px] font-bold text-[#079669] shrink-0 pt-[1px] select-none tabular-nums font-mono">
+                                  {String(vIdx + 1).padStart(2, '0')}.
+                                </span>
+                                <span className="text-[12px] text-slate-700 leading-relaxed break-words font-normal">
+                                  {variation}
+                                </span>
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Full Expected Answer with line breaks preserved */}
+                <div className="space-y-2 pt-3.5 border-t border-slate-100">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
+                    <span>REFERENCE ANSWER</span>
+                  </div>
+                  <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/80 text-slate-700 text-[12px] leading-relaxed whitespace-pre-line font-normal">
+                    {selectedQuestion.expectedAnswer}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Modal Footer */}
-            <div className="px-6 py-4 sm:px-7 sm:py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end shrink-0">
-              <button
-                type="button"
-                onClick={() => setSelectedQuestion(null)}
-                className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition-all duration-150 cursor-pointer active:scale-[0.98]"
-              >
-                Done Reviewing
-              </button>
+              {/* Modal Footer */}
+              <div className="px-5 py-3 sm:px-6 sm:py-3 border-t border-slate-100 bg-slate-50/50 flex justify-end shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCloseDetails}
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition-all duration-150 cursor-pointer active:scale-[0.98]"
+                >
+                  Done Reviewing
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 mt-12">
