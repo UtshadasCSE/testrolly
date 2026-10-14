@@ -83,9 +83,6 @@ export const VerificationScreen: React.FC<VerificationScreenProps> = ({ onSucces
 
           {/* HEADING & SUBHEADING */}
           <div className="text-center mb-7">
-            <h1 className="text-2xl sm:text-[26px] font-bold text-[#0F172A] tracking-tight font-heading">
-              Welcome to Testrolly
-            </h1>
             <p className="text-xs sm:text-sm font-semibold text-[#079669] mt-1 tracking-wide">
               Private AI-Powered Interview Practice
             </p>
