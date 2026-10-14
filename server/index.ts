@@ -5,7 +5,21 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { evaluateAnswerWithCloudflare } from './cloudflareService.js';
-import { getInterviewQuestionById } from './interviewQuestions.js';
+import { getInterviewData, getInterviewQuestionById } from './interviewQuestions.js';
+import {
+  verifyCredentials,
+  createSessionToken,
+  parseCookies,
+  revokeToken,
+  createSessionCookie,
+  clearSessionCookie,
+  checkRateLimit,
+  recordFailedVerification,
+  resetVerificationRateLimit,
+  getClientIp,
+  isRequestSecure,
+  isAuthenticated,
+} from './auth.js';
 
 // Load environment variables (.env.local takes precedence over .env)
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -27,7 +41,7 @@ const upload = multer({
   },
 });
 
-// Health check and config status endpoint (NEVER exposes the key)
+// Health check and config status endpoint (NEVER exposes secrets)
 app.get('/api/health', (req, res) => {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
@@ -44,8 +58,102 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// AI Evaluation Endpoint
+// GET /api/session - Check authentication state
+app.get('/api/session', (req, res) => {
+  const authed = isAuthenticated(req);
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
+  res.json({ authenticated: authed });
+});
+
+// POST /api/verify - Rate-limited university & course gate verification
+app.post('/api/verify', (req, res) => {
+  const ip = getClientIp(req);
+  const rateLimit = checkRateLimit(ip);
+
+  if (!rateLimit.allowed) {
+    return res.status(429).json({
+      error: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many verification attempts. Please wait a few minutes before trying again.',
+      retryAfterSeconds: rateLimit.retryAfterSeconds,
+    });
+  }
+
+  const { university, course } = req.body || {};
+
+  if (!university || !course || typeof university !== 'string' || typeof course !== 'string' || !university.trim() || !course.trim()) {
+    return res.status(400).json({
+      error: 'VALIDATION_ERROR',
+      message: 'Please provide both your university name and course name.',
+    });
+  }
+
+  const isValid = verifyCredentials(university, course);
+  if (!isValid) {
+    recordFailedVerification(ip);
+    return res.status(401).json({
+      error: 'VERIFICATION_FAILED',
+      message: 'Verification failed. Please check your university and course details and try again.',
+    });
+  }
+
+  resetVerificationRateLimit(ip);
+  const token = createSessionToken(university, course);
+  const secure = isRequestSecure(req);
+  res.setHeader('Set-Cookie', createSessionCookie(token, secure));
+  return res.json({
+    success: true,
+    message: 'Verification successful. Welcome to Testrolly!',
+  });
+});
+
+// POST /api/logout - Invalidate session & clear cookie ("Lock App")
+app.post('/api/logout', (req, res) => {
+  const cookies = parseCookies(req.headers.cookie);
+  if (cookies.testrolly_session) {
+    revokeToken(cookies.testrolly_session);
+  }
+  const secure = isRequestSecure(req);
+  res.setHeader('Set-Cookie', clearSessionCookie(secure));
+  return res.json({
+    success: true,
+    message: 'Session ended successfully.',
+  });
+});
+
+// GET /api/interview-data - Protected interview question bank
+app.get('/api/interview-data', (req, res) => {
+  if (!isAuthenticated(req)) {
+    return res.status(401).json({
+      error: 'UNAUTHORIZED',
+      message: 'Access verification required.',
+    });
+  }
+
+  try {
+    const data = getInterviewData();
+    res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    return res.json({
+      title: data.title,
+      description: data.description,
+      questions: data.questions,
+    });
+  } catch (err: any) {
+    return res.status(500).json({
+      error: 'DATA_LOAD_ERROR',
+      message: 'Failed to load interview data.',
+    });
+  }
+});
+
+// AI Evaluation Endpoint (Protected)
 app.post('/api/evaluate', upload.single('audio'), async (req, res) => {
+  if (!isAuthenticated(req)) {
+    return res.status(401).json({
+      error: 'UNAUTHORIZED',
+      message: 'Access verification required to evaluate responses.',
+    });
+  }
+
   try {
     const { questionId, durationSeconds, transcriptFallback, audioBase64, audioMimeType } = req.body;
     const qId = parseInt(questionId, 10);

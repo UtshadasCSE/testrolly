@@ -1,5 +1,6 @@
 import { evaluateAnswerWithCloudflare } from '../server/cloudflareService.js';
 import { getInterviewQuestionById } from '../server/interviewQuestions.js';
+import { isAuthenticated } from '../server/auth.js';
 
 export const config = {
   api: {
@@ -20,6 +21,14 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({
       error: 'METHOD_NOT_ALLOWED',
       message: 'Only POST requests are supported for this endpoint.',
+    });
+  }
+
+  // Validate authenticated session
+  if (!isAuthenticated(req)) {
+    return res.status(401).json({
+      error: 'UNAUTHORIZED',
+      message: 'Access verification required to evaluate responses.',
     });
   }
 

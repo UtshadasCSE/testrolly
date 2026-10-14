@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import interviewDataRaw from '../data/test.json';
 import { InterviewData, InterviewQuestion } from '../types/interview';
 import { Logo } from '../components/Logo';
-import { ArrowLeft, BookOpen, ChevronDown, Play, X } from 'lucide-react';
-
-const testData = interviewDataRaw as InterviewData;
+import { ArrowLeft, BookOpen, ChevronDown, Lock, Play, X } from 'lucide-react';
 
 interface PracticeProps {
   onNavigateHome: () => void;
   onPracticeQuestion: (questionId: number) => void;
+  onLockApp?: () => void;
+  interviewData?: InterviewData | null;
 }
 
-export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQuestion }) => {
+export const Practice: React.FC<PracticeProps> = ({
+  onNavigateHome,
+  onPracticeQuestion,
+  onLockApp,
+  interviewData,
+}) => {
   const [selectedQuestion, setSelectedQuestion] = useState<InterviewQuestion | null>(null);
   const [isModalVariationsExpanded, setIsModalVariationsExpanded] = useState<boolean>(false);
-  const questions: InterviewQuestion[] = testData.questions || [];
+  const questions: InterviewQuestion[] = interviewData?.questions || [];
 
   const handleOpenDetails = (q: InterviewQuestion) => {
     setIsModalVariationsExpanded(false);
@@ -80,14 +84,29 @@ export const Practice: React.FC<PracticeProps> = ({ onNavigateHome, onPracticeQu
             <Logo size="md" />
           </button>
 
-          <button
-            type="button"
-            onClick={onNavigateHome}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80 text-sm font-medium transition-all duration-150 cursor-pointer active:scale-[0.98] font-sans"
-          >
-            <ArrowLeft className="w-4 h-4 text-slate-500" />
-            <span>Back to Home</span>
-          </button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {onLockApp && (
+              <button
+                type="button"
+                onClick={onLockApp}
+                title="Lock App"
+                aria-label="Lock App"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80 text-sm font-medium transition-all duration-150 cursor-pointer active:scale-[0.98] font-sans"
+              >
+                <Lock className="w-4 h-4 text-slate-500" />
+                <span className="hidden sm:inline">Lock App</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={onNavigateHome}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 border border-slate-200/80 text-sm font-medium transition-all duration-150 cursor-pointer active:scale-[0.98] font-sans"
+            >
+              <ArrowLeft className="w-4 h-4 text-slate-500" />
+              <span>Back to Home</span>
+            </button>
+          </div>
         </div>
       </header>
 

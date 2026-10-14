@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import interviewDataRaw from '../data/test.json';
 import {
   CompletedQuestion,
   InterviewData,
@@ -30,13 +29,13 @@ import {
 } from '../utils/recording';
 import { AlertCircle, RefreshCw, Square, Loader2, ArrowLeft } from 'lucide-react';
 
-const testData = interviewDataRaw as InterviewData;
-
 interface TestInterviewProps {
   mode?: 'full' | 'practice';
   practiceQuestionId?: number;
   onNavigatePractice?: () => void;
   onNavigateHome?: () => void;
+  onLockApp?: () => void;
+  interviewData?: InterviewData | null;
 }
 
 export const TestInterview: React.FC<TestInterviewProps> = ({
@@ -44,9 +43,11 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
   practiceQuestionId,
   onNavigatePractice,
   onNavigateHome,
+  onLockApp,
+  interviewData,
 }) => {
   const isPracticeMode = mode === 'practice';
-  const allQuestions: IInterviewQuestion[] = testData.questions || [];
+  const allQuestions: IInterviewQuestion[] = interviewData?.questions || [];
   const practiceQuestion =
     isPracticeMode && practiceQuestionId
       ? allQuestions.find((q) => q.id === practiceQuestionId)
@@ -573,6 +574,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
         phase={phase}
         isPracticeMode={isPracticeMode}
         streak={streak}
+        onLockApp={onLockApp}
         onGetStarted={() => setPhase('device-check')}
         onLogoClick={() => {
           handleRestartSession();

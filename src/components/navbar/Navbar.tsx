@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Lock } from 'lucide-react';
 import { Logo } from '../Logo';
 import { InterviewPhase } from '../../types/interview';
 import { StreakBadge } from '../interview/StreakBadge';
@@ -10,6 +10,7 @@ interface NavbarProps {
   onGetStarted: () => void;
   onLogoClick?: () => void;
   streak?: number;
+  onLockApp?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onGetStarted,
   onLogoClick,
   streak,
+  onLockApp,
 }) => {
   return (
     <header className="sticky top-3 sm:top-4 z-50 w-[calc(100%-24px)] sm:w-[calc(100%-48px)] max-w-6xl mx-auto">
@@ -36,6 +38,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-2 sm:gap-3">
           {typeof streak === 'number' && (
             <StreakBadge streak={streak} />
+          )}
+
+          {onLockApp && (
+            <button
+              type="button"
+              onClick={onLockApp}
+              title="Lock App"
+              aria-label="Lock App"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 text-xs font-medium transition-all duration-150 cursor-pointer shadow-sm active:scale-[0.98] font-sans"
+            >
+              <Lock className="w-3.5 h-3.5 text-slate-500" />
+              <span className="hidden sm:inline">Lock App</span>
+            </button>
           )}
 
           {isPracticeMode ? (

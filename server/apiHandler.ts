@@ -2,7 +2,21 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import path from 'path';
 import dotenv from 'dotenv';
 import { evaluateAnswerWithCloudflare } from './cloudflareService.js';
-import { getInterviewQuestionById } from './interviewQuestions.js';
+import { getInterviewData, getInterviewQuestionById } from './interviewQuestions.js';
+import {
+  verifyCredentials,
+  createSessionToken,
+  parseCookies,
+  revokeToken,
+  createSessionCookie,
+  clearSessionCookie,
+  checkRateLimit,
+  recordFailedVerification,
+  resetVerificationRateLimit,
+  getClientIp,
+  isRequestSecure,
+  isAuthenticated,
+} from './auth.js';
 
 // Ensure env vars are loaded
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -31,8 +45,147 @@ export async function handleApiRequest(req: IncomingMessage, res: ServerResponse
     return true;
   }
 
-  // POST /api/evaluate
+  // GET /api/session - Check authentication state
+  if (req.method === 'GET' && url.startsWith('/api/session')) {
+    const authed = isAuthenticated(req);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
+    res.writeHead(200);
+    res.end(JSON.stringify({
+      authenticated: authed,
+    }));
+    return true;
+  }
+
+  // POST /api/verify - Rate-limited university & course gate verification
+  if (req.method === 'POST' && url.startsWith('/api/verify')) {
+    const ip = getClientIp(req);
+    const rateLimit = checkRateLimit(ip);
+
+    if (!rateLimit.allowed) {
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(429);
+      res.end(JSON.stringify({
+        error: 'RATE_LIMIT_EXCEEDED',
+        message: 'Too many verification attempts. Please wait a few minutes before trying again.',
+        retryAfterSeconds: rateLimit.retryAfterSeconds,
+      }));
+      return true;
+    }
+
+    const chunks: Buffer[] = [];
+    for await (const chunk of req) {
+      chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+    }
+    const rawBody = Buffer.concat(chunks).toString('utf-8');
+
+    let university = '';
+    let course = '';
+    try {
+      const parsed = JSON.parse(rawBody);
+      university = parsed.university;
+      course = parsed.course;
+    } catch {
+      // JSON parse error
+    }
+
+    if (!university || !course || typeof university !== 'string' || typeof course !== 'string' || !university.trim() || !course.trim()) {
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(400);
+      res.end(JSON.stringify({
+        error: 'VALIDATION_ERROR',
+        message: 'Please provide both your university name and course name.',
+      }));
+      return true;
+    }
+
+    const isValid = verifyCredentials(university, course);
+    if (!isValid) {
+      recordFailedVerification(ip);
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(401);
+      res.end(JSON.stringify({
+        error: 'VERIFICATION_FAILED',
+        message: 'Verification failed. Please check your university and course details and try again.',
+      }));
+      return true;
+    }
+
+    resetVerificationRateLimit(ip);
+    const token = createSessionToken(university, course);
+    const secure = isRequestSecure(req);
+    res.setHeader('Set-Cookie', createSessionCookie(token, secure));
+    res.setHeader('Content-Type', 'application/json');
+    res.writeHead(200);
+    res.end(JSON.stringify({
+      success: true,
+      message: 'Verification successful. Welcome to Testrolly!',
+    }));
+    return true;
+  }
+
+  // POST /api/logout - Invalidate session & clear cookie ("Lock App")
+  if (req.method === 'POST' && url.startsWith('/api/logout')) {
+    const cookies = parseCookies(req.headers.cookie);
+    if (cookies.testrolly_session) {
+      revokeToken(cookies.testrolly_session);
+    }
+    const secure = isRequestSecure(req);
+    res.setHeader('Set-Cookie', clearSessionCookie(secure));
+    res.setHeader('Content-Type', 'application/json');
+    res.writeHead(200);
+    res.end(JSON.stringify({
+      success: true,
+      message: 'Session ended successfully.',
+    }));
+    return true;
+  }
+
+  // GET /api/interview-data - Protected interview question bank
+  if (req.method === 'GET' && url.startsWith('/api/interview-data')) {
+    if (!isAuthenticated(req)) {
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(401);
+      res.end(JSON.stringify({
+        error: 'UNAUTHORIZED',
+        message: 'Access verification required.',
+      }));
+      return true;
+    }
+
+    try {
+      const data = getInterviewData();
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      res.writeHead(200);
+      res.end(JSON.stringify({
+        title: data.title,
+        description: data.description,
+        questions: data.questions,
+      }));
+    } catch (err: any) {
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(500);
+      res.end(JSON.stringify({
+        error: 'DATA_LOAD_ERROR',
+        message: 'Failed to load interview data.',
+      }));
+    }
+    return true;
+  }
+
+  // POST /api/evaluate - Protected Cloudflare AI Evaluation Endpoint
   if (req.method === 'POST' && url.startsWith('/api/evaluate')) {
+    if (!isAuthenticated(req)) {
+      res.setHeader('Content-Type', 'application/json');
+      res.writeHead(401);
+      res.end(JSON.stringify({
+        error: 'UNAUTHORIZED',
+        message: 'Access verification required to evaluate responses.',
+      }));
+      return true;
+    }
+
     try {
       const chunks: Buffer[] = [];
       for await (const chunk of req) {
