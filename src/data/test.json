@@ -409,6 +409,126 @@
       ],
       "expectedAnswer": "Yes, before making my final decision, I considered the University of Greenwich and the University of Wolverhampton, both for their MSc Data Science programmes.\nFirstly, I compared their course structures with my academic background, previous professional experience and future career goals.\n\nThe University of Greenwich offers modules such as Machine Learning, Programming Fundamentals for Data Science and Ethics in Data Science. Similarly, the University of Wolverhampton offers relevant modules, including Applied Database Systems, Applied Statistics and digital citizenship for Computing.\n\nAlthough both universities offer good Data Science programmes, I felt that Bangor University's MSc Advanced Data Science was more closely aligned with my career plans.\n\nI am particularly interested in Bangor's Data Science, Machine Learning and Information Visualisation modules because I want to develop my skills in data analysis, machine learning and presenting analytical findings clearly.\n\nSecondly, I compared their university rankings. According to the Complete University Guide 2027 figures in my research notes, Bangor is ranked 49th, while Greenwich is ranked 102nd and Wolverhampton 101st.\n\nTuition fees were another important consideration. Greenwich's tuition fee is £19,450, while Wolverhampton's is £18,645. At Bangor University, my tuition fee is £14,500 after receiving a £6,000 scholarship.\n\nTherefore, Bangor is more affordable for me and offers a programme that closely matches my academic background and career ambitions.\n\nOverall, after comparing the course structures, university rankings and tuition fees, I decided that Bangor University was the most suitable choice for my postgraduate studies.",
       "preparationTime": 10
+    },
+    {
+      "id": 41,
+      "difficulty": "University Related",
+      "question": "Do you know the address of your university/ location and amenities?",
+      "questionVariations": [
+        "Could you tell me the full address of Bangor University and explain where it is located in the United Kingdom?",
+        "How familiar are you with Bangor University's location, and what local amenities are available for students?",
+        "Can you describe the geographical location of Bangor University, including nearby facilities and public transport connections?"
+      ],
+      "expectedAnswer": "Yes, I am aware of my university's location.\n\nBangor University's full address is College Road, Bangor, Gwynedd, LL57 2DG, United Kingdom.\n\nThe university is located in Bangor, North Wales, between the beautiful Eryri mountains, also known as Snowdonia, and the Menai Strait.\n\nMost university buildings are situated around the city centre and Upper Bangor.\nThe location is convenient for students because there are supermarkets, shops, cafés and restaurants nearby.\n\nBangor also has good public transport connections, including a railway station with train services connecting the city to major UK destinations such as Manchester and London.\n\nOverall, I believe Bangor offers a peaceful and student-friendly environment where I can focus on my studies while having easy access to everyday facilities.",
+      "preparationTime": 10
+    },
+    {
+      "id": 42,
+      "difficulty": "University Related",
+      "question": "How many campuses does this university have? And why have you chosen to study at this campus?",
+      "questionVariations": [
+        "How many main campuses does Bangor University have, and which campus will you attend for your MSc Advanced Data Science programme?",
+        "Could you explain why you chose the Bangor campus rather than the Wrexham campus, particularly in relation to your course and academic facilities?",
+        "What do you know about Bangor University's campuses, and what makes your chosen campus suitable for your postgraduate studies?"
+      ],
+      "expectedAnswer": "Bangor University has two main home campuses: Bangor and Wrexham.\n\nMy MSc Advanced Data Science programme is based at the Bangor campus. I chose this campus mainly because the School of Computer Science and Engineering is located there, along with the computer laboratories and technical facilities relevant to my course. These facilities will help me develop my programming, data analysis and practical research skills.\n\nAdditionally, Bangor offers a student-friendly environment with supermarkets, shops, cafés and good transport connections nearby.\n\nOverall, I believe the Bangor campus provides a suitable academic environment where I can focus on my postgraduate studies.",
+      "preparationTime": 10
+    },
+    {
+      "id": 43,
+      "difficulty": "University Related",
+      "question": "What do you know about the surrounding area of this university?",
+      "questionVariations": [
+        "Could you describe the area surrounding Bangor University, including the local amenities and facilities available to students?",
+        "What research have you done about Bangor, North Wales, and what do you know about its geographical location, nearby attractions, and transport connections?",
+        "How familiar are you with the environment around Bangor University, and why do you think it is a suitable place for international students to live and study?"
+      ],
+      "expectedAnswer": "I have researched the area around Bangor University, and I understand that -  Bangor University is located in Bangor, North Wales, between the Eryri (Snowdonia) mountains and the Menai Strait.\n\nBangor is a small and compact city with supermarkets, shops, cafés, restaurants and other facilities for students.\n\nMost university buildings and student accommodation are close to the city centre, so many places are easily accessible on foot.\n\nThe area is surrounded by beautiful natural attractions, including mountains, beaches, lakes and rivers. Eryri (Snowdonia) National Park is also nearby.\n\nThere are several interesting places to visit, such as Anglesey, Menai Bridge, Caernarfon, Conwy and Llanberis.\n\nBangor also has good transport connections, including rail links to major cities such as Manchester and London.\n\nOverall, I think Bangor offers a peaceful, student-friendly environment with good facilities, transport and opportunities for outdoor activities.",
+      "preparationTime": 10
+    },
+    {
+      "id": 44,
+      "difficulty": "UK Related",
+      "question": "Why do you want to study in the UK? What is your motivation for studying in the UK?",
+      "questionVariations": [
+        "Could you explain why you have chosen the United Kingdom as your study destination instead of pursuing your postgraduate education in Bangladesh or another country?",
+        "What are the main reasons that motivated you to pursue your MSc Advanced Data Science in the UK, and how will the British education system benefit your academic and professional development?",
+        "Why do you believe studying in the UK is the right decision for your future career, particularly considering its teaching methods, course duration, and international learning environment?"
+      ],
+      "expectedAnswer": "I chose the UK because it's well known for its high-quality education, internationally recognised degrees, and practical approach to teaching.\n\nOne of the main reasons is that UK universities focus on critical thinking, independent learning, and practical skills rather than just theoretical knowledge. I believe this teaching approach will help me develop my technical, analytical, and problem-solving skills.\n\nAnother reason is that most master's programmes in the UK can be completed in approximately one year. This will allow me to gain advanced knowledge and an internationally recognised qualification in a relatively short time.\n\nI'm also interested in the UK's multicultural environment, where I'll have the opportunity to meet students from different countries, exchange ideas, and improve my communication and teamwork skills.\n\nSince I already have a background in Computer Science and professional experience as a Frontend Developer, I believe studying in the UK will help me gain specialised knowledge in Data Science.\n\nOverall, my goal is to receive a quality education, gain international academic experience, and return to Bangladesh to build my future career as a Data Analyst and eventually a Data Scientist.",
+      "preparationTime": 10
+    },
+    {
+      "id": 45,
+      "difficulty": "UK Related",
+      "question": "Did you consider studying in any other country? Why did you choose the UK over other countries?",
+      "questionVariations": [
+        "Apart from the United Kingdom, which other countries did you consider for your postgraduate studies, and why did you ultimately choose the UK?",
+        "Could you compare the education systems, master's programme durations, and teaching approaches in the UK, Australia, and Canada, and explain why the UK is more suitable for you?",
+        "What factors influenced your decision to study in the United Kingdom rather than Australia or Canada, particularly in relation to your academic background and future career plans?"
+      ],
+      "expectedAnswer": "Yes, before choosing the UK, I also considered studying in Australia and Canada.\n\nBoth countries offer high-quality education and internationally recognised degrees. However, after comparing their education systems, course durations, and teaching approaches, I felt that the UK was a better choice for me.\n\nFirstly, Australia has a strong education system, but many master's programmes take around one and a half to two years to complete.\n\nSecondly, Canada also offers quality education and a multicultural environment, but many master's programmes can take longer than one year.\n\nOn the other hand, the UK offers many master's programmes that can be completed in approximately one year, which is more suitable for my academic and career plans.\n\nAnother important reason is the UK's teaching approach, which focuses on independent learning, critical thinking, research, and practical skills.\n\nI'm also attracted to the UK's multicultural environment, where I'll have the opportunity to meet students from different countries and improve my communication and teamwork skills.\nOverall, I believe the UK is the best choice for me because of its quality education, shorter master's programmes, practical teaching approach, and international exposure.\n\nAfter completing my MSc, I plan to return to Bangladesh and use my knowledge and skills to build my career in Data Science.",
+      "preparationTime": 10
+    },
+    {
+      "id": 46,
+      "difficulty": "UK Related",
+      "question": "Did you consider any universities in other countries?",
+      "questionVariations": [
+        "Before deciding to study at Bangor University, did you research or consider any universities outside the United Kingdom?",
+        "Could you tell me which universities you considered in Australia and Canada, including their courses, tuition fees, and programme durations?",
+        "Why did you choose Bangor University's MSc Advanced Data Science instead of the programmes offered by Deakin University in Australia and the University of Waterloo in Canada?"
+      ],
+      "expectedAnswer": "Yes, before choosing Bangor University, I also considered two universities in other countries: Deakin University in Australia and the University of Waterloo in Canada.\n\nAt Deakin University, I considered the Master of Data Science programme, which covers subjects like Database Fundamentals, Data Wrangling, and Mathematics for Artificial Intelligence. However, the course duration is around two years, and the tuition fee is approximately AUD 45,800 per year.\n\nI also considered the University of Waterloo's Master of Data Science and Artificial Intelligence programme. It covers subjects like Data-Intensive Distributed Analytics, Optimization for Data Science, and Database Engineering. However, the programme takes around 16 months, and the tuition fee I researched was approximately CAD 56,448.\n\nIn comparison, Bangor University's MSc Advanced Data Science offers modules like Data Science, Machine Learning, and Information Visualisation, which are more closely related to my future career goals.\n\nAnother important factor was the course duration and tuition fees. Bangor's programme takes approximately one year, and after receiving my £6,000 scholarship, my tuition fee is £14,500.\n\nOverall, I chose Bangor University because its course content matches my career goals, the duration is shorter, and the tuition fee is more affordable for me.\n\nAfter completing my MSc, I plan to return to Bangladesh and pursue my career as a Data Analyst.",
+      "preparationTime": 10
+    },
+    {
+      "id": 47,
+      "difficulty": "UK Related",
+      "question": "Why don't you study in your home country? Why do you want to study in the UK instead of Bangladesh?",
+      "questionVariations": [
+        "Why have you decided to pursue your postgraduate studies in the United Kingdom rather than continuing your education in Bangladesh?",
+        "Bangladesh has universities offering Computer Science and Data Science programmes. What specific advantages do you expect from studying in the UK instead of your home country?",
+        "Could you explain why studying MSc Advanced Data Science in the UK is more suitable for your academic development and future career goals than studying in Bangladesh?"
+      ],
+      "expectedAnswer": "Bangladesh has many good universities offering Computer Science and related programmes. However, I chose the UK because I want to gain specialised knowledge in Data Science and experience a different academic environment.\n\nI already completed my Bachelor's degree in Computer Science and Engineering in Bangladesh, and I also have professional experience as a Frontend Developer.\n\nNow, I want to expand my knowledge beyond general computing and develop advanced skills in Data Science and Machine Learning.\n\nOne of the main reasons I chose the UK is its teaching approach, which focuses on independent learning, research, critical thinking, and practical skills.\n\nAnother reason is the UK's multicultural environment, where I'll have the opportunity to meet students from different countries, exchange ideas, and improve my communication skills.\n\nAlso, many UK master's programmes can be completed in approximately one year, which will allow me to gain specialised knowledge within a relatively short period.\n\nOverall, I believe studying in the UK will give me valuable international academic experience and help me develop the skills I need for my future career.\n\nAfter completing my MSc, I plan to return to Bangladesh and build my career as a Data Analyst and eventually a Data Scientist.",
+      "preparationTime": 10
+    },
+    {
+      "id": 48,
+      "difficulty": "Financial Sponsor",
+      "question": "Who is financing your studies? How will you manage your tuition fees and accommodation costs?",
+      "questionVariations": [
+        "Who will be financially supporting you during your studies at Bangor University, and how do you plan to cover your tuition fees and living expenses?",
+        "Could you explain who your financial sponsor is and how your tuition fees, accommodation, and other living costs in the UK will be funded?",
+        "How have you arranged the finances for your MSc Advanced Data Science programme, and will you need to rely on part-time employment to support yourself?"
+      ],
+      "expectedAnswer": "My father is my financial sponsor, and he will cover both my tuition fees and living expenses, including accommodation, while I'm studying in the UK.\n\nMy family has sufficient funds to support my education, so I won't need to depend on part-time work to cover my expenses.\n\nThis will allow me to focus completely on my studies at Bangor University.",
+      "preparationTime": 10
+    },
+    {
+      "id": 49,
+      "difficulty": "Financial Sponsor",
+      "question": "What does your financial sponsor do, and what are his sources of income?",
+      "questionVariations": [
+        "Could you explain your father's occupation, the businesses he owns, and how he earns the income needed to support your studies in the UK?",
+        "What are your financial sponsor's main and additional sources of income, and how will he manage your tuition fees and living expenses?",
+        "You mentioned that your father is sponsoring your education. Could you describe his pharmacy business and fish pond income, and explain how he can afford your postgraduate studies?"
+      ],
+      "expectedAnswer": "My father is a businessman, and he owns a pharmacy in our hometown in Bangladesh.\n\nApart from his pharmacy business, he also owns more than three fish ponds where local fishermen raise fish. When they sell the fish, my father receives a share of the income.\n\nSo, his main source of income is his pharmacy business, but he also earns additional income from the fish ponds.\n\nHe is financially capable of covering my tuition fees, accommodation, and other living expenses in the UK.\n\nWith his support, I'll be able to focus on my MSc Advanced Data Science course at Bangor University without worrying about financial difficulties.",
+      "preparationTime": 10
+    },
+    {
+      "id": 50,
+      "difficulty": "Financial Sponsor",
+      "question": "How much is your financial sponsor's monthly or yearly income?",
+      "questionVariations": [
+        "Could you tell me approximately how much your father earns each month and annually from his pharmacy business and fish farming?",
+        "What is your financial sponsor's total annual income, and can you explain the main sources of that income?",
+        "How much does your father earn from his businesses, and how will his income enable him to cover your tuition fees and living expenses in the UK?"
+      ],
+      "expectedAnswer": "My father earns approximately 7 to 7.5 lakh Bangladeshi Taka per month from his pharmacy business and fish farming.\n\nHe owns a pharmacy in our hometown, and he also has more than three fish ponds where local fishermen raise fish. When they sell the fish, my father receives a share of the income.\n\nAltogether, his annual income is around 84 to 90 lakh Bangladeshi Taka.\n\nSo, he is financially capable of covering my tuition fees, accommodation, and other living expenses in the UK. With his support, I can focus on my studies at Bangor University without worrying about financial difficulties.",
+      "preparationTime": 10
     }
   ]
 }
