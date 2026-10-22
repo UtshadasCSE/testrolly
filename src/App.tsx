@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { TestInterview } from './pages/TestInterview';
 import { Practice } from './pages/Practice';
+import { DifficultyInterview } from './pages/DifficultyInterview';
+import { NotFound } from './pages/NotFound';
 import { MobileErrorScreen } from './components/MobileErrorScreen';
 import { VerificationScreen } from './components/VerificationScreen';
 import { Logo } from './components/Logo';
@@ -21,6 +23,22 @@ function checkIsMobile(): boolean {
   const isSmartphone = /Android.*Mobile|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
 
   return isSmallViewport || isSmartphone;
+}
+
+function isKnownRoute(pathname: string): boolean {
+  if (
+    pathname === '/' ||
+    pathname === '/practice' ||
+    pathname === '/difficulty-interview' ||
+    pathname === '/test-interview'
+  ) {
+    return true;
+  }
+  // Matches /practice/:id where :id is numeric
+  if (/^\/practice\/\d+$/.test(pathname)) {
+    return true;
+  }
+  return false;
 }
 
 export function App() {
@@ -164,12 +182,26 @@ export function App() {
     navigate('/');
   }, [navigate]);
 
-  // 1. Existing Mobile-Only Restriction takes PRIORITY over the verification gate
+  // 1. Existing Mobile-Only Restriction takes PRIORITY over all screens
   if (isMobile) {
     return <MobileErrorScreen />;
   }
 
-  // 2. Initial verification status check loading state
+  // 2. Parse current route
+  const [pathname, search] = currentUrl.split('?');
+
+  // 3. Catch-all: Custom 404 Page for unknown routes
+  if (!isKnownRoute(pathname)) {
+    return (
+      <NotFound
+        onNavigateHome={() => navigate('/')}
+        onNavigatePractice={() => navigate('/practice')}
+        onLockApp={sessionStatus === 'authenticated' ? handleLockApp : undefined}
+      />
+    );
+  }
+
+  // 4. Initial verification status check loading state
   if (sessionStatus === 'checking') {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6 text-slate-600 select-none">
@@ -182,12 +214,12 @@ export function App() {
     );
   }
 
-  // 3. Verification Gate: shown whenever the user is not authenticated
+  // 5. Verification Gate: shown whenever the user is not authenticated
   if (sessionStatus === 'unauthenticated') {
     return <VerificationScreen onSuccess={handleVerificationSuccess} />;
   }
 
-  // 4. Loading state while fetching protected interview questions after verification
+  // 6. Loading state while fetching protected interview questions after verification
   if (!interviewData) {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6 text-slate-600 select-none">
@@ -200,11 +232,11 @@ export function App() {
     );
   }
 
-  // 5. Authenticated App Navigation
-  const [pathname, search] = currentUrl.split('?');
+  // 7. Authenticated App Navigation
   const searchParams = new URLSearchParams(search || '');
   const modeParam = searchParams.get('mode');
   const questionParam = searchParams.get('question');
+  const categoryParam = searchParams.get('category') || searchParams.get('difficulty');
 
   const isPracticeInterview =
     modeParam === 'practice' ||
@@ -218,6 +250,7 @@ export function App() {
     practiceQuestionId = parseInt(idStr, 10);
   }
 
+  // Practice More List Page (/practice without a specific question)
   if (pathname === '/practice' && !isPracticeInterview) {
     return (
       <Practice
@@ -231,12 +264,39 @@ export function App() {
     );
   }
 
+  // Difficulty Interview Category Selection Page (/difficulty-interview without category selected)
+  if (pathname === '/difficulty-interview' && !categoryParam) {
+    return (
+      <DifficultyInterview
+        interviewData={interviewData}
+        onSelectCategory={(category) =>
+          navigate(`/difficulty-interview?category=${encodeURIComponent(category)}`)
+        }
+        onNavigateHome={() => navigate('/')}
+        onLockApp={handleLockApp}
+      />
+    );
+  }
+
+  // Difficulty-Based Interview Mode (either /difficulty-interview?category=... or /test-interview?mode=difficulty&category=...)
+  const isDifficultyInterview =
+    (pathname === '/difficulty-interview' && Boolean(categoryParam)) ||
+    (modeParam === 'difficulty' && Boolean(categoryParam));
+
+  const interviewKey = isPracticeInterview
+    ? `practice-${practiceQuestionId}`
+    : isDifficultyInterview
+    ? `difficulty-${categoryParam}`
+    : 'full-interview';
+
   return (
     <TestInterview
-      key={isPracticeInterview ? `practice-${practiceQuestionId}` : 'full-interview'}
-      mode={isPracticeInterview ? 'practice' : 'full'}
+      key={interviewKey}
+      mode={isPracticeInterview ? 'practice' : isDifficultyInterview ? 'difficulty' : 'full'}
       practiceQuestionId={practiceQuestionId}
+      selectedDifficulty={isDifficultyInterview ? (categoryParam ?? undefined) : undefined}
       onNavigatePractice={() => navigate('/practice')}
+      onNavigateDifficulty={() => navigate('/difficulty-interview')}
       onNavigateHome={() => navigate('/')}
       onLockApp={handleLockApp}
       interviewData={interviewData}

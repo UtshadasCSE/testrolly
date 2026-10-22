@@ -30,9 +30,11 @@ import {
 import { AlertCircle, RefreshCw, Square, Loader2, ArrowLeft } from 'lucide-react';
 
 interface TestInterviewProps {
-  mode?: 'full' | 'practice';
+  mode?: 'full' | 'practice' | 'difficulty';
   practiceQuestionId?: number;
+  selectedDifficulty?: string;
   onNavigatePractice?: () => void;
+  onNavigateDifficulty?: () => void;
   onNavigateHome?: () => void;
   onLockApp?: () => void;
   interviewData?: InterviewData | null;
@@ -41,13 +43,17 @@ interface TestInterviewProps {
 export const TestInterview: React.FC<TestInterviewProps> = ({
   mode = 'full',
   practiceQuestionId,
+  selectedDifficulty,
   onNavigatePractice,
+  onNavigateDifficulty,
   onNavigateHome,
   onLockApp,
   interviewData,
 }) => {
   const isPracticeMode = mode === 'practice';
+  const isDifficultyMode = mode === 'difficulty';
   const allQuestions: IInterviewQuestion[] = interviewData?.questions || [];
+
   const practiceQuestion =
     isPracticeMode && practiceQuestionId
       ? allQuestions.find((q) => q.id === practiceQuestionId)
@@ -55,11 +61,24 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
 
   const isInvalidPracticeQuestion = isPracticeMode && !practiceQuestion;
 
-  const questions: IInterviewQuestion[] =
-    isPracticeMode && practiceQuestion ? [practiceQuestion] : allQuestions;
+  const difficultyQuestions =
+    isDifficultyMode && selectedDifficulty
+      ? allQuestions.filter((q) => q.difficulty === selectedDifficulty)
+      : [];
+
+  const isInvalidDifficultyCategory =
+    isDifficultyMode && (!selectedDifficulty || difficultyQuestions.length === 0);
+
+  const questions: IInterviewQuestion[] = isPracticeMode
+    ? (practiceQuestion ? [practiceQuestion] : [])
+    : isDifficultyMode
+    ? difficultyQuestions
+    : allQuestions;
 
   // Navigation & Interview State
-  const [phase, setPhase] = useState<InterviewPhase>(isPracticeMode ? 'device-check' : 'intro');
+  const [phase, setPhase] = useState<InterviewPhase>(
+    isPracticeMode || isDifficultyMode ? 'device-check' : 'intro'
+  );
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [completedQuestions, setCompletedQuestions] = useState<CompletedQuestion[]>([]);
 
@@ -514,7 +533,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
     setCompletedQuestions([]);
     setCurrentQuestionIndex(0);
     setIsFinalizing(false);
-    setPhase('intro');
+    setPhase(isPracticeMode || isDifficultyMode ? 'device-check' : 'intro');
   };
 
   // Safe fallback UI when invalid question is requested in Practice Mode
@@ -567,15 +586,75 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
     );
   }
 
+  // Safe fallback UI when invalid category is requested in Difficulty Mode
+  if (isInvalidDifficultyCategory) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+        <Navbar
+          phase="intro"
+          isDifficultyMode={true}
+          categoryName={selectedDifficulty}
+          streak={streak}
+          onGetStarted={() => onNavigateDifficulty?.()}
+          onLogoClick={onNavigateHome}
+        />
+        <main className="flex-1 max-w-xl w-full mx-auto px-4 py-16 flex flex-col items-center justify-center text-center">
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4 w-full">
+            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 font-heading">Category Not Found</h2>
+            <p className="text-sm text-slate-600">
+              The requested interview category ({selectedDifficulty ?? 'invalid'}) does not exist or has no questions available.
+            </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={onNavigateDifficulty}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition-all duration-150 cursor-pointer active:scale-[0.98]"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Interview Categories</span>
+              </button>
+            </div>
+          </div>
+        </main>
+        <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 px-4">
+          <p className="leading-relaxed">
+            <span>Testrolly — AI University Admission, Credibility & CAS Practice</span>
+            <span className="text-slate-300 mx-2" aria-hidden="true">|</span>
+            <a
+              href="https://utshastack.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-slate-600 hover:text-[#079669] transition-colors duration-200 focus:outline-none focus-visible:underline"
+            >
+              Utsha Das
+            </a>
+          </p>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
       {/* Floating Rounded Navbar */}
       <Navbar
         phase={phase}
         isPracticeMode={isPracticeMode}
+        isDifficultyMode={isDifficultyMode}
+        categoryName={selectedDifficulty}
         streak={streak}
         onLockApp={onLockApp}
-        onGetStarted={() => setPhase('device-check')}
+        onGetStarted={() => {
+          if (isDifficultyMode) {
+            handleRestartSession();
+            setPhase('device-check');
+          } else {
+            setPhase('device-check');
+          }
+        }}
         onLogoClick={() => {
           handleRestartSession();
           if (onNavigateHome) onNavigateHome();
@@ -585,10 +664,11 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
       {/* Main Content Area */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
         {/* Phase 1: Intro */}
-        {phase === 'intro' && !isPracticeMode && (
+        {phase === 'intro' && !isPracticeMode && !isDifficultyMode && (
           <InterviewIntro
             onStart={() => setPhase('device-check')}
             onPracticeMore={onNavigatePractice}
+            onDifficultyInterview={onNavigateDifficulty}
             questionCount={questions.length}
           />
         )}
@@ -604,12 +684,30 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
                 } else {
                   setPhase('intro');
                 }
+              } else if (isDifficultyMode) {
+                if (onNavigateDifficulty) {
+                  onNavigateDifficulty();
+                } else {
+                  setPhase('intro');
+                }
               } else {
                 setPhase('intro');
               }
             }}
-            backLabel={isPracticeMode ? '← Back to Practice Questions' : '← Back to Overview'}
-            actionLabel={isPracticeMode ? 'Start Practice' : 'Start Interview'}
+            backLabel={
+              isPracticeMode
+                ? '← Back to Practice Questions'
+                : isDifficultyMode
+                ? '← Back to Categories'
+                : '← Back to Overview'
+            }
+            actionLabel={
+              isPracticeMode
+                ? 'Start Practice'
+                : isDifficultyMode
+                ? `Start ${selectedDifficulty} Interview`
+                : 'Start Interview'
+            }
           />
         )}
 
@@ -622,7 +720,9 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
               totalQuestions={questions.length}
               difficulty={currentQuestion.difficulty}
               isPracticeMode={isPracticeMode}
-              questionId={currentQuestion.id}
+              isDifficultyMode={isDifficultyMode}
+              categoryName={selectedDifficulty}
+              questionId={isPracticeMode ? currentQuestion.id : undefined}
               streak={streak}
             />
 
@@ -745,7 +845,7 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
             onNextQuestion={handleNextQuestion}
             onFinishInterview={handleFinishInterview}
             onRetryQuestion={handleRetryQuestion}
-            onBackToQuestions={onNavigatePractice}
+            onBackToQuestions={isDifficultyMode ? onNavigateDifficulty : onNavigatePractice}
             streak={streak}
           />
         )}
@@ -755,6 +855,21 @@ export const TestInterview: React.FC<TestInterviewProps> = ({
           <OverallFeedback
             completedQuestions={completedQuestions}
             onRestart={handleRestartSession}
+            isDifficultyMode={isDifficultyMode}
+            categoryName={selectedDifficulty}
+            totalCategoryQuestions={questions.length}
+            onRetryCategory={() => {
+              handleRestartSession();
+              setPhase('device-check');
+            }}
+            onChooseAnotherCategory={() => {
+              handleRestartSession();
+              if (onNavigateDifficulty) onNavigateDifficulty();
+            }}
+            onBackToHome={() => {
+              handleRestartSession();
+              if (onNavigateHome) onNavigateHome();
+            }}
           />
         )}
       </main>

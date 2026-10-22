@@ -8,6 +8,8 @@ import {
   ChevronUp,
   RotateCcw,
   MessageSquareQuote,
+  ArrowLeft,
+  Layers,
 } from 'lucide-react';
 import { CompletedQuestion, OverallResultSummary } from '../../types/interview';
 import {
@@ -21,16 +23,46 @@ import { formatDuration } from '../../utils/recording';
 interface OverallFeedbackProps {
   completedQuestions: CompletedQuestion[];
   onRestart: () => void;
+  isDifficultyMode?: boolean;
+  categoryName?: string;
+  totalCategoryQuestions?: number;
+  onRetryCategory?: () => void;
+  onChooseAnotherCategory?: () => void;
+  onBackToHome?: () => void;
 }
 
 export const OverallFeedback: React.FC<OverallFeedbackProps> = ({
   completedQuestions,
   onRestart,
+  isDifficultyMode = false,
+  categoryName,
+  totalCategoryQuestions,
+  onRetryCategory,
+  onChooseAnotherCategory,
+  onBackToHome,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
 
-  const summary: OverallResultSummary = computeOverallSummary(completedQuestions);
-  const scoreColors = getScoreColors(summary.averageScore);
+  // Filter questions that have valid evaluation data (never invent scores)
+  const validEvaluations = completedQuestions.filter(
+    (q) =>
+      q.feedback &&
+      typeof q.feedback.overallScore === 'number' &&
+      !isNaN(q.feedback.overallScore)
+  );
+  const hasValidEvaluations = validEvaluations.length > 0;
+  const summary: OverallResultSummary = computeOverallSummary(validEvaluations);
+
+  const scoreColors = hasValidEvaluations
+    ? getScoreColors(summary.averageScore)
+    : {
+        text: 'text-slate-600',
+        bg: 'bg-slate-50',
+        border: 'border-slate-200',
+        bar: 'bg-slate-400',
+        badge: 'bg-slate-100 text-slate-700 border-slate-300',
+        glow: '',
+      };
 
   const toggleExpand = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -46,6 +78,9 @@ export const OverallFeedback: React.FC<OverallFeedbackProps> = ({
     { label: 'Clarity', score: summary.categoryAverages.clarity },
   ];
 
+  const totalAttempted = completedQuestions.length;
+  const totalTargetQuestions = totalCategoryQuestions || totalAttempted;
+
   return (
     <div className="max-w-4xl mx-auto space-y-10 py-6 md:py-10 pb-20 animate-in fade-in duration-300">
       {/* Top Banner */}
@@ -54,48 +89,92 @@ export const OverallFeedback: React.FC<OverallFeedbackProps> = ({
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
               <Trophy className="w-4 h-4 text-emerald-600" />
-              <span>Interview Complete</span>
+              <span>
+                {isDifficultyMode && categoryName
+                  ? `${categoryName} Completed`
+                  : 'Interview Complete'}
+              </span>
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 font-heading tracking-tight">
-              Overall Interview Results
+              {isDifficultyMode && categoryName
+                ? `${categoryName} Interview Completed!`
+                : 'Overall Interview Results'}
             </h2>
             <p className="text-sm text-slate-600 max-w-lg leading-relaxed">
-              You completed all {completedQuestions.length} interview questions. Here is your comprehensive evaluation across credibility and admission criteria.
+              {isDifficultyMode && categoryName
+                ? `You completed the ${categoryName} category practice. Here is your evaluation based on credibility and university admission standards.`
+                : `You completed all ${completedQuestions.length} interview questions. Here is your comprehensive evaluation across credibility and admission criteria.`}
             </p>
           </div>
 
           {/* Large Overall Score Card */}
           <div className={`p-6 rounded-2xl ${scoreColors.bg} border ${scoreColors.border} ${scoreColors.glow} text-center min-w-[200px] shrink-0`}>
             <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mb-1">
-              Interview Score
+              {isDifficultyMode ? 'Average Category Score' : 'Interview Score'}
             </p>
-            <div className={`text-6xl font-black font-heading ${scoreColors.text} tracking-tight`}>
-              {summary.averageScore}
-              <span className="text-2xl font-normal text-slate-500">/100</span>
-            </div>
-            <div className="mt-2">
-              <span className={`inline-block px-3.5 py-1 rounded-full text-xs font-bold ${scoreColors.badge}`}>
-                {summary.status}
-              </span>
-            </div>
+            {hasValidEvaluations ? (
+              <>
+                <div className={`text-6xl font-black font-heading ${scoreColors.text} tracking-tight`}>
+                  {summary.averageScore}
+                  <span className="text-2xl font-normal text-slate-500">/100</span>
+                </div>
+                <div className="mt-2">
+                  <span className={`inline-block px-3.5 py-1 rounded-full text-xs font-bold ${scoreColors.badge}`}>
+                    {summary.status}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="py-2">
+                <div className="text-4xl font-bold text-slate-400 font-heading my-1">—</div>
+                <span className="inline-block px-3 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-300">
+                  No Valid Evaluations
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Quick Summary Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-[11px] text-slate-500 block font-semibold">Completed Questions</span>
-            <span className="text-lg font-bold text-slate-900 font-mono">{completedQuestions.length}</span>
+        {isDifficultyMode ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-[11px] text-slate-500 block font-semibold">Questions Attempted</span>
+              <span className="text-lg font-bold text-slate-900 font-mono">
+                {totalAttempted} / {totalTargetQuestions}
+              </span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-[11px] text-slate-500 block font-semibold">Evaluated Answers</span>
+              <span className="text-lg font-bold text-emerald-700 font-mono">
+                {validEvaluations.length} of {totalAttempted}
+              </span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-[11px] text-slate-500 block font-semibold">Total Spoken Time</span>
+              <span className="text-lg font-bold text-slate-900 font-mono">{formatDuration(summary.totalDuration)}</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-[11px] text-slate-500 block font-semibold">Total Fillers Used</span>
+              <span className="text-lg font-bold text-amber-700 font-mono">{summary.totalFillerWords}</span>
+            </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-[11px] text-slate-500 block font-semibold">Total Spoken Time</span>
-            <span className="text-lg font-bold text-slate-900 font-mono">{formatDuration(summary.totalDuration)}</span>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-[11px] text-slate-500 block font-semibold">Completed Questions</span>
+              <span className="text-lg font-bold text-slate-900 font-mono">{completedQuestions.length}</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-[11px] text-slate-500 block font-semibold">Total Spoken Time</span>
+              <span className="text-lg font-bold text-slate-900 font-mono">{formatDuration(summary.totalDuration)}</span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 col-span-2 sm:col-span-1">
+              <span className="text-[11px] text-slate-500 block font-semibold">Total Fillers Used</span>
+              <span className="text-lg font-bold text-amber-700 font-mono">{summary.totalFillerWords}</span>
+            </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 col-span-2 sm:col-span-1">
-            <span className="text-[11px] text-slate-500 block font-semibold">Total Fillers Used</span>
-            <span className="text-lg font-bold text-amber-700 font-mono">{summary.totalFillerWords}</span>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Category Averages */}
@@ -290,15 +369,52 @@ export const OverallFeedback: React.FC<OverallFeedbackProps> = ({
         </div>
       </div>
 
-      {/* Restart CTA */}
-      <div className="pt-6 flex justify-center">
-        <button
-          onClick={onRestart}
-          className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all cursor-pointer"
-        >
-          <RotateCcw className="w-4 h-4" />
-          <span>Practice Another Session</span>
-        </button>
+      {/* Action CTAs */}
+      <div className="pt-6">
+        {isDifficultyMode ? (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-xl mx-auto">
+            {/* 1. Retry This Category */}
+            <button
+              type="button"
+              onClick={onRetryCategory || onRestart}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md shadow-emerald-600/20 hover:shadow-emerald-600/30 transition-all cursor-pointer active:scale-[0.98]"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Retry This Category</span>
+            </button>
+
+            {/* 2. Choose Another Category */}
+            <button
+              type="button"
+              onClick={onChooseAnotherCategory}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-900 font-semibold text-sm shadow-sm hover:shadow transition-all cursor-pointer active:scale-[0.98]"
+            >
+              <Layers className="w-4 h-4 text-slate-500" />
+              <span>Choose Another Category</span>
+            </button>
+
+            {/* 3. Back to Home */}
+            <button
+              type="button"
+              onClick={onBackToHome}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-900 font-semibold text-sm shadow-sm hover:shadow transition-all cursor-pointer active:scale-[0.98]"
+            >
+              <ArrowLeft className="w-4 h-4 text-slate-500" />
+              <span>Back to Home</span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={onRestart}
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all cursor-pointer active:scale-[0.98]"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Practice Another Session</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

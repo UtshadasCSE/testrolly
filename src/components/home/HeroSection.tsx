@@ -4,11 +4,16 @@ import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { HowItWorksFan } from './HowItWorksFan';
 
 interface HeroSectionProps {
-  onStart: () => void;
+  onStart?: () => void;
   onPracticeMore?: () => void;
+  onDifficultyInterview?: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onStart, onPracticeMore }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({
+  onStart,
+  onPracticeMore,
+  onDifficultyInterview,
+}) => {
   const shouldReduceMotion = useReducedMotion();
 
   const getTransition = (delay: number) => ({
@@ -67,10 +72,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onStart, onPracticeMor
         >
           <button
             type="button"
-            onClick={onStart}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all duration-150 active:scale-[0.98] cursor-pointer"
+            onClick={onDifficultyInterview || onStart}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 sm:px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-base shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all duration-150 active:scale-[0.98] cursor-pointer"
           >
-            <span>Get Started</span>
+            <span>Classified Interview</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 

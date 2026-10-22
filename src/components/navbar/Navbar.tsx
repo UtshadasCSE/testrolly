@@ -7,6 +7,8 @@ import { StreakBadge } from '../interview/StreakBadge';
 interface NavbarProps {
   phase: InterviewPhase;
   isPracticeMode?: boolean;
+  isDifficultyMode?: boolean;
+  categoryName?: string;
   onGetStarted: () => void;
   onLogoClick?: () => void;
   streak?: number;
@@ -16,6 +18,8 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   phase,
   isPracticeMode = false,
+  isDifficultyMode = false,
+  categoryName,
   onGetStarted,
   onLogoClick,
   streak,
@@ -56,6 +60,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {isPracticeMode ? (
             <div className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-sans">
               Single Question Practice
+            </div>
+          ) : isDifficultyMode ? (
+            <div className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-sans">
+              {categoryName ? `${categoryName} Practice` : 'Category Practice'}
             </div>
           ) : phase === 'intro' ? (
             <button

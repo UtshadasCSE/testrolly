@@ -217,11 +217,29 @@ app.post('/api/evaluate', upload.single('audio'), async (req, res) => {
   }
 });
 
+function isKnownAppRoute(pathname: string): boolean {
+  if (
+    pathname === '/' ||
+    pathname === '/practice' ||
+    pathname === '/difficulty-interview' ||
+    pathname === '/test-interview'
+  ) {
+    return true;
+  }
+  if (/^\/practice\/\d+$/.test(pathname)) {
+    return true;
+  }
+  return false;
+}
+
 // Production static file serving if dist exists
 const distPath = path.resolve(process.cwd(), 'dist');
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
   app.get('*', (req, res) => {
+    if (!isKnownAppRoute(req.path)) {
+      res.status(404);
+    }
     res.sendFile(path.resolve(distPath, 'index.html'));
   });
 }
