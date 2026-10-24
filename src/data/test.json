@@ -529,6 +529,18 @@
       ],
       "expectedAnswer": "My father earns approximately 7 to 7.5 lakh Bangladeshi Taka per month from his pharmacy business and fish farming.\n\nHe owns a pharmacy in our hometown, and he also has more than three fish ponds where local fishermen raise fish. When they sell the fish, my father receives a share of the income.\n\nAltogether, his annual income is around 84 to 90 lakh Bangladeshi Taka.\n\nSo, he is financially capable of covering my tuition fees, accommodation, and other living expenses in the UK. With his support, I can focus on my studies at Bangor University without worrying about financial difficulties.",
       "preparationTime": 10
+    },
+    {
+      "id": 51,
+      "difficulty": "Personal Information",
+      "question": "Introduce yourself.",
+      "questionVariations": [
+        "Could you please introduce yourself and briefly tell me about your educational and professional background?",
+        "Tell me a little about yourself, including your academic qualifications, work experience, and why you want to study at Bangor University.",
+        "Before we begin the interview, could you briefly describe your background and explain your future academic and career goals?"
+      ],
+      "expectedAnswer": "My name is Utsha Chandra Das, and I was born on 25th November 2000 in Cumilla, Bangladesh.\n\nI completed my Bachelor's degree in Computer Science and Engineering from Daffodil International University in 2024.\n\nAfter graduating, I gained professional experience as a Frontend Developer at Searchaly, a software company in Bangladesh.\n\nNow, I want to continue my higher education by pursuing an MSc in Advanced Data Science at Bangor University in the UK.\n\nMy goal is to develop specialised skills in Data Science and Machine Learning and use those skills to build my future career in Bangladesh.",
+      "preparationTime": 10
     }
   ]
 }
